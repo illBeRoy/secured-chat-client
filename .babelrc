@@ -1,0 +1,13 @@
+{
+  "env": {},
+  "ignore": [],
+  "plugins": [
+    "transform-class-properties",
+    "transform-runtime"
+  ],
+  "presets": [
+    "es2015",
+    "es2017",
+    "react"
+  ]
+}
