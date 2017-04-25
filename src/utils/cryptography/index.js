@@ -41,8 +41,12 @@ class Cryptography {
         });
     }
 
+    encryptAsym(encryptionKey, signingKey, str) {}
+
+    decryptAsym(decryptionKey, verificationKey, str) {}
+
     /**
-     * Encrypts a string with a given key using AES.
+     * Encrypts a string symmetrically with a given key using AES.
      *
      * The given key is transformed into a 128bit representation using pbkdf2 password derivation, and then is used
      * as the AES secret, and also as its initial value.
@@ -52,7 +56,7 @@ class Cryptography {
      * @param key {string} the secret password used for the encryption
      * @param str {string} the value to encrypt
      */
-    encrypt(key, str) {
+    encryptSym(key, str) {
 
         let secret = forge.pkcs5.pbkdf2(key, '', 10000, 16);
         let aes = forge.cipher.createCipher('AES-CBC', secret);
@@ -65,7 +69,7 @@ class Cryptography {
     }
 
     /**
-     * Decrypts a string with a given key using AES.
+     * Decrypts a string symmetrically with a given key using AES.
      *
      * The given key is transformed into a 128bit representation using pbkdf2 password derivation, and then is used
      * as the AES secret, and also as its initial value.
@@ -73,7 +77,7 @@ class Cryptography {
      * @param key {string} the secret password used for the decryption
      * @param str {string} the encrypted value
      */
-    decrypt(key, str) {
+    decryptSym(key, str) {
 
         let secret = forge.pkcs5.pbkdf2(key, '', 10000, 16);
         let aes = forge.cipher.createDecipher('AES-CBC', secret);
