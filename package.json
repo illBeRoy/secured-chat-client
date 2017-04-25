@@ -5,6 +5,8 @@
     "author": "Roy Sommer <roy@sommer.co.il>",
     "version": "1.0.0",
     "dependencies": {
+        "axios": "^0.16.1",
+        "bunyan": "^1.8.10",
         "electron": "^1.6.6",
         "react": "^15.5.4",
         "react-dom": "^15.5.4"
