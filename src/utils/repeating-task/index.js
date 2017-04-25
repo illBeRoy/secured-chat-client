@@ -157,3 +157,6 @@ class RepeatingTask {
     }
 
 }
+
+
+export {RepeatingTask};
