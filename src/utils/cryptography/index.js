@@ -83,10 +83,10 @@ class Cryptography {
         let aes = forge.cipher.createDecipher('AES-CBC', secret);
 
         aes.start({iv: secret});
-        aes.update(forge.util.createBuffer(str));
+        aes.update(forge.util.createBuffer(base64.decode(str)));
         aes.finish();
 
-        return base64.encode(aes.output.bytes());
+        return aes.output.data;
     }
 
 }
