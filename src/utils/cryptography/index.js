@@ -41,7 +41,16 @@ class Cryptography {
         });
     }
 
-    encryptAsym(encryptionKey, signingKey, str) {}
+    encryptAsym(encryptionKey, signingKey, str) {
+
+        let sha1 = forge.sha1.create();
+        sha1.update(str);
+
+        let signedData = signingKey.sign(sha1);
+        let encryptedAndSignedData = encryptionKey.encrypt(forge.util.createBuffer(signedData));
+
+        return base64.encode(encryptedAndSignedData.bytes());
+    }
 
     decryptAsym(decryptionKey, verificationKey, str) {}
 
@@ -88,6 +97,10 @@ class Cryptography {
 
         return aes.output.data;
     }
+
+    exportPublicKey(publicKey) {}
+
+    exportPrivateKey(privateKey) {}
 
 }
 
