@@ -126,5 +126,6 @@ fabric.properties
 
 ### Project ###
 bin/
+.etc
 
 # End of https://www.gitignore.io/api/node,webstorm

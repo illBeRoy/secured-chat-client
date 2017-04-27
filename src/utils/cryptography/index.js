@@ -43,12 +43,20 @@ class Cryptography {
 
     encryptAsym(encryptionKey, signingKey, str) {
 
+        // create mac using sha1
         let sha1 = forge.sha1.create();
         sha1.update(str);
 
-        let signedData = signingKey.sign(sha1);
-        let encryptedAndSignedData = encryptionKey.encrypt(forge.util.createBuffer(signedData));
+        // sign it
+        let signature = signingKey.sign(sha1);
 
+        // concatenate to message
+        let message = str + signature;
+
+        // encrypt
+        let encryptedAndSignedData = encryptionKey.encrypt(forge.util.createBuffer(message), 'RSA-OAEP');
+
+        // return base64 representation
         return base64.encode(encryptedAndSignedData.bytes());
     }
 
