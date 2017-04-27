@@ -11,7 +11,9 @@
         "electron": "^1.6.6",
         "node-forge": "^0.7.1",
         "react": "^15.5.4",
-        "react-dom": "^15.5.4"
+        "react-dom": "^15.5.4",
+        "secure-random": "^1.1.1",
+        "structs": "^0.0.0"
     },
     "scripts": {
         "compile": "babel src --out-dir bin --source-maps",
