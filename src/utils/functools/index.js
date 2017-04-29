@@ -8,7 +8,7 @@ let partial = (func, ...args) => {
 
     return (...restOfArgs) => {
 
-        func(...args.concat(restOfArgs));
+        return func(...args.concat(restOfArgs));
     }
 };
 

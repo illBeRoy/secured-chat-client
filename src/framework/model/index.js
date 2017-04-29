@@ -188,7 +188,7 @@ class Model extends _Model {
      *
      * May be implemented by subclass.
      *
-     * May be mutating.
+     * May be mutating, but said mutation will not persist post save.
      */
     onSave() {}
 
