@@ -1,6 +1,7 @@
 import forge from 'node-forge';
 import base64 from 'base-64';
 import secureRandom from 'secure-random';
+import {range} from 'range';
 
 
 /**
@@ -17,12 +18,19 @@ class Cryptography {
     /**
      * Hashes a string using SHA-256 and returns a base-64 representation of the result.
      * @param str {string}
+     * @param iterations {number} how many times to apply hash digestion
      */
-    hash(str) {
+    hash(str, iterations=1) {
 
-        let sha256 = forge.sha256.create();
-        sha256.update(str);
-        return base64.encode(sha256.digest().bytes());
+        for (let i of range(iterations)) {
+
+            let sha256 = forge.sha256.create();
+            sha256.update(str);
+
+            str = sha256.digest().bytes();
+        }
+
+        return base64.encode(str);
     }
 
     /**

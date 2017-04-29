@@ -3,6 +3,7 @@
   "ignore": [],
   "plugins": [
     "transform-class-properties",
+    "transform-async-generator-functions",
     "transform-runtime"
   ],
   "presets": [
