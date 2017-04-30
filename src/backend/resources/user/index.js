@@ -1,5 +1,5 @@
-import models from './models';
-import actions from './actions';
+import * as models from './models';
+import * as actions from './actions';
 
 
-export {models, actions};
+export default {models, actions};

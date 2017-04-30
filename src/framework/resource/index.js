@@ -1,4 +1,5 @@
 import {Model} from './model';
+import {Action} from './action';
 
 
-export {Model};
+export {Model, Action};

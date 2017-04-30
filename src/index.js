@@ -1,8 +1,8 @@
-class A {
-    static get b() { if (!this._b) this._b = []; return this._b; }
-}
+import {ApplicationStore} from './backend';
+import user from './backend/resources/user';
 
-class B extends A {}
 
-B.b.push(5);
-console.log(A.b, B.b);
+let store = new ApplicationStore({}, [user]);
+
+console.log(store.resources.User);
+

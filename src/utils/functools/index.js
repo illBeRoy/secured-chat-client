@@ -13,4 +13,4 @@ let partial = (func, ...args) => {
 };
 
 
-export {partial};
+export default {partial};

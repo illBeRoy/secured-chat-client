@@ -1,115 +1,81 @@
-import {ApiClient} from '../utils/api-client';
-import {Cryptography} from '../utils/cryptography';
-import {User, Message} from './models';
+import functools from '../utils/functools';
+
 import {Store} from '../framework/store';
 
+import {ApiClient} from '../utils/api-client';
+import {Cryptography} from '../utils/cryptography';
 
-class Application {
+import {Session} from './session';
 
-    /**
-     * @param username {string} name of the logged in user
-     * @param masterKey {string} master key used for deriving auth and encryption keys
-     */
-    constructor({username, masterKey}) {
 
-        if (!username || !masterKey) {
+class ApplicationStore extends Store {
 
-            throw new Error('Cannot start application without credentials.');
-        }
+    constructor(config, ...args) {
 
-        this._username = username;
-        this._masterKey = masterKey;
+        super(...args);
 
-        this._api = new ApiClient(); // todo: accept api url from configuration
+        // save config
+        this._config = config;
+
+        // create utils
+        this._api = new ApiClient();
         this._cryptography = new Cryptography();
-        this._store = new Store([User, Message]);
+
+        // create session
+        this._session = this.createSession();
     }
 
-    /**
-     * Get the necessary credentials for api requests.
-     * @returns {object} credentials for use with apiClient
-     */
-    get credentials() {
+    get builtinAugmentations() {
+
+        return Object.assign({}, super.builtinAugmentations, {utils: this.utils, session: this.session});
+    }
+
+    get utils() {
 
         return {
-            username: username,
-            password: this.authKey
+            api: this._api,
+            cryptography: this._cryptography,
+            localStorage: this._localStorage
+        }
+    }
+
+    get session() {
+
+        return {
+            username: null,
+            masterKey: null
         };
     }
 
-    /**
-     * Get the derivation of the masterKey used for authentication.
-     * @returns {string}
-     */
-    get authKey() {
+    createSession() {
 
-        return this._cryptography.hash(this._masterKey, 1);
-    }
+        // create session from localStorage or fallback to empty state.
+        let session;
+        try {
 
-    /**
-     * Get the derivation of the masterKey used for encryption.
-     * @returns {string}
-     */
-    get encryptionKey() {
+            session = Session(JSON.parse(this._localStorage.getItem('_session') || '{}'), this.utils);
+        } catch (err) {
 
-        return this._cryptography.hash(this._masterKey, 2);
-    }
-
-    async getMe() {
-
-        return await this.getUser(this._username);
-    }
-
-    async getUser(username) {
-
-        // attempt to get user from local db
-        let [user] = User.query((user) => user.username == username);
-
-        // if doesn't exist, get from server
-        if (!user) {
-
-            let user = new User(await this._api.request('get', '/users/me', {credentials: this.credentials}));
-            user.save();
+            session = Session({}, this.utils);
         }
 
-        // return user
-        return user;
+        // assign the save function
+        assign(session, 'save', functools.partial(this.saveSession.bind(this), session));
+
+        // return session
+        return session;
     }
 
-    async getIncomingMessagse(clearServerCache=true) {
+    saveSession(session) {
 
-        let {query_time, messages} = await this._api.request('get', '/messages', {credentials: this.credentials});
-        messages = messages.map((x) => new Message(x));
+        try {
 
-        for (let message of messages) {
-
-            message.save();
-        }
-
-        if (clearServerCache) {
-
-            await this._api.request(
-                'delete',
-                '/messages',
-                {params: {until: query_time}, credentials: this.credentials}
-            );
-        }
+            this._localStorage.setItem('_session', JSON.stringify(session));
+        } finally {}
     }
 
-    async sendMessage(recipientName, message) {}
-
-    /**
-     * Creates the necessary configuration from the given parameters.
-     * @param username {string} name of the logged in user
-     * @param masterKey {string} master key used for deriving auth and encryption keys
-     * @returns {{username: string, masterKey: string}}
-     */
-    static createConfiguration(username, masterKey) {
-
-        return {username, masterKey};
-    }
 
 }
 
 
-export {Application};
+export {ApplicationStore};

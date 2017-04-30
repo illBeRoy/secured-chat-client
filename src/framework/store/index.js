@@ -19,9 +19,31 @@ class Store {
         this._attachResources(resources);
     }
 
+    /**
+     * Returns the resources list that's used by the store.
+     * @returns {{string: Model}}
+     */
     get resources() {
 
         return this._models;
+    }
+
+    /**
+     * Augmentations: methods and properties that are attached to Model classes in runtime.
+     *
+     * Builtins are augmentations that are attached to the model as its own properties, giving it access to multiple
+     * functionalities that are supplied by the store, such as utilities, sessions, etc.
+     *
+     * A good example would be to take a look at the defined getter: its value, `store` will be available as
+     * `
+     *
+     * The builtinAugmentations getter allows inheritors of Store to define that list programmatically, making them
+     * accessible to all model instances and classes implicitly in runtime.
+     * @returns {{store: Store}}
+     */
+    get builtinAugmentations() {
+
+        return {store: this};
     }
 
     /**
@@ -42,11 +64,13 @@ class Store {
 
         for (let resource of resources) {
 
-            for (let model of resource.models) {
+            for (let modelRef of Object.keys(resource.models)) {
+
+                // get model from ref
+                let model = resource.models[modelRef];
 
                 // bind model to store with a bidirectional acknowledgement
                 this._models[model.name] = model;
-                assign(model, 'store', this);
 
                 // if localStorage exists, attempt to load state from
                 if (this._localStorage) {
@@ -73,7 +97,7 @@ class Store {
      */
     _augmentModel(resource, modelClass) {
 
-        this._augmentObjectWithActions(resource, modelClass, false);
+        this._augmentObject(resource, modelClass, false);
     }
 
     /**
@@ -84,32 +108,43 @@ class Store {
      */
     _augmentModelInstance(resource, instance) {
 
-        this._augmentObjectWithActions(resource, instance, true);
+        this._augmentObject(resource, instance, true);
     }
 
     /**
-     * Attaches actions to be used with model classes or instances.
+     * Attaches builtin augmentations and actions to be used with model classes or instances.
      * @param resource {module} the relevant resource module, from which actions are extracted
      * @param target {Class|Model} the target object to augment
      * @param isClass {boolean} if true, will assign class methods, otherwise assigns instance methods
      * @private
      */
-    _augmentObjectWithActions(resource, target, isClass) {
+    _augmentObject(resource, target, isClass) {
 
+        // attach builtin augmentations
+        for (let augmentation of Object.keys(this.builtinAugmentations)) {
+
+            assign(target, augmentation, this.builtinAugmentations[augmentation]);
+        }
+
+        // attach actions - iterate over action modules
         for (let actionRef of Object.keys(resource.actions)) {
 
-            // get actual action class
-            let action = resource.actions[actionRef].Action;
+            // iterate over action classes
+            for (let actionClass of Object.keys(resource.action)) {
 
-            // extract name, method and class method information
-            let actionName = action.__name__;
-            let actionMethod = action.onCall;
-            let isActionClassMethod = action.classMethod;
+                // get actual action class
+                let action = resource.actions[actionRef][actionClass];
 
-            // only assign action if it matches this being a class or an instance
-            if (isActionClassMethod == isClass) {
+                // extract name, method and class method information
+                let actionName = action.__name__;
+                let actionMethod = action.onCall;
+                let isActionClassMethod = action.classMethod;
 
-                assign(instance, actionName, functools.partial(actionMethod, instance));
+                // only assign action if it matches this being a class or an instance
+                if (isActionClassMethod == isClass) {
+
+                    assign(target, actionName, functools.partial(actionMethod, instance));
+                }
             }
         }
     }
