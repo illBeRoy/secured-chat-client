@@ -1,5 +1,7 @@
 import {ApiClient} from '../utils/api-client';
 import {Cryptography} from '../utils/cryptography';
+import {User, Message} from './models';
+import {Store} from '../framework/store';
 
 
 class Application {
@@ -17,8 +19,10 @@ class Application {
 
         this._username = username;
         this._masterKey = masterKey;
+
         this._api = new ApiClient(); // todo: accept api url from configuration
         this._cryptography = new Cryptography();
+        this._store = new Store([User, Message]);
     }
 
     /**
@@ -51,11 +55,48 @@ class Application {
         return this._cryptography.hash(this._masterKey, 2);
     }
 
-    async getMe() {}
-    async getUser(username) {}
-    async getIncomingMessagse() {}
+    async getMe() {
+
+        return await this.getUser(this._username);
+    }
+
+    async getUser(username) {
+
+        // attempt to get user from local db
+        let [user] = User.query((user) => user.username == username);
+
+        // if doesn't exist, get from server
+        if (!user) {
+
+            let user = new User(await this._api.request('get', '/users/me', {credentials: this.credentials}));
+            user.save();
+        }
+
+        // return user
+        return user;
+    }
+
+    async getIncomingMessagse(clearServerCache=true) {
+
+        let {query_time, messages} = await this._api.request('get', '/messages', {credentials: this.credentials});
+        messages = messages.map((x) => new Message(x));
+
+        for (let message of messages) {
+
+            message.save();
+        }
+
+        if (clearServerCache) {
+
+            await this._api.request(
+                'delete',
+                '/messages',
+                {params: {until: query_time}, credentials: this.credentials}
+            );
+        }
+    }
+
     async sendMessage(recipientName, message) {}
-    async _sendAuthenticatedRequest(method, url, )
 
     /**
      * Creates the necessary configuration from the given parameters.

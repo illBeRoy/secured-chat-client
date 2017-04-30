@@ -3,7 +3,25 @@
  */
 class _Store {
 
-    static _updateHandlers = [];
+    static get updateHandlers() {
+
+        if (!this._updateHandlers) {
+
+            this._updateHandlers = [];
+        }
+
+        return this._updateHandlers;
+    }
+
+    static get creationHandlers() {
+
+        if (!this._creationHandlers) {
+
+            this._creationHandlers = [];
+        }
+
+        return this._creationHandlers;
+    }
 
     /**
      * A getter that either creates or returns an already created store.
@@ -26,13 +44,18 @@ class _Store {
         return JSON.stringify(this.store);
     }
 
+    static onCreate(callback) {
+
+        this.creationHandlers.push(callback);
+    }
+
     /**
      * Attach a handler that will be called with a serialization of the database every time it is updated.
      * @param callback {function(string)}
      */
     static onUpdate(callback) {
 
-        this._updateHandlers.push(callback);
+        this.updateHandlers.push(callback);
     }
 
     /**
@@ -56,7 +79,7 @@ class _Store {
             this.store[key] = obj[key];
         }
 
-        this._updateHandlers.forEach((fn) => fn(this.export()));
+        this.updateHandlers.forEach((fn) => fn(this.export()));
     }
 
 }
@@ -79,6 +102,8 @@ class _Model extends _Store {
 
             this._import(obj);
         }
+
+        this.constructor.creationHandlers.forEach((fn) => fn(this));
     }
 
     /**

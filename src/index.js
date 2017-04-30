@@ -1,10 +1,8 @@
-import {User} from './models/user';
+class A {
+    static get b() { if (!this._b) this._b = []; return this._b; }
+}
 
+class B extends A {}
 
-let roy = new User();
-roy.id = 0;
-roy.username = 'roysom';
-roy.save();
-
-
-console.log(User.get(0));
+B.b.push(5);
+console.log(A.b, B.b);
