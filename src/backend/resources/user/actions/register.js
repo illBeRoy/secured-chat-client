@@ -1,4 +1,5 @@
 import {Action} from '../../../../framework/resource';
+import {User} from '../models';
 
 
 class RegisterAction extends Action {
@@ -9,7 +10,7 @@ class RegisterAction extends Action {
 
     static async onCall(cls, username, password) {
 
-        console.log(cls, username, password);
+        return await User.utils.api.request('get', '/users');
     }
 
 }

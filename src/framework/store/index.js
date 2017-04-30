@@ -39,11 +39,11 @@ class Store {
      *
      * The builtinAugmentations getter allows inheritors of Store to define that list programmatically, making them
      * accessible to all model instances and classes implicitly in runtime.
-     * @returns {{store: Store}}
+     * @returns {object}
      */
     get builtinAugmentations() {
 
-        return {store: this};
+        return {resources: this.resources};
     }
 
     /**
@@ -62,6 +62,7 @@ class Store {
      */
     _attachResources(resources) {
 
+        // first enumerate all resources
         for (let resource of resources) {
 
             for (let modelRef of Object.keys(resource.models)) {
@@ -71,6 +72,16 @@ class Store {
 
                 // bind model to store with a bidirectional acknowledgement
                 this._models[model.name] = model;
+            }
+        }
+
+        //attach everything
+        for (let resource of resources) {
+
+            for (let modelRef of Object.keys(resource.models)) {
+
+                // get model from ref
+                let model = resource.models[modelRef];
 
                 // if localStorage exists, attempt to load state from
                 if (this._localStorage) {
@@ -97,7 +108,7 @@ class Store {
      */
     _augmentModel(resource, modelClass) {
 
-        this._augmentObject(resource, modelClass, false);
+        this._augmentObject(resource, modelClass, true);
     }
 
     /**
@@ -108,7 +119,7 @@ class Store {
      */
     _augmentModelInstance(resource, instance) {
 
-        this._augmentObject(resource, instance, true);
+        this._augmentObject(resource, instance, false);
     }
 
     /**
@@ -130,7 +141,7 @@ class Store {
         for (let actionRef of Object.keys(resource.actions)) {
 
             // iterate over action classes
-            for (let actionClass of Object.keys(resource.action)) {
+            for (let actionClass of Object.keys(resource.actions[actionRef])) {
 
                 // get actual action class
                 let action = resource.actions[actionRef][actionClass];
@@ -143,7 +154,7 @@ class Store {
                 // only assign action if it matches this being a class or an instance
                 if (isActionClassMethod == isClass) {
 
-                    assign(target, actionName, functools.partial(actionMethod, instance));
+                    assign(target, actionName, functools.partial(actionMethod, target));
                 }
             }
         }

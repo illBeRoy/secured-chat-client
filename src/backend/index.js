@@ -53,14 +53,14 @@ class ApplicationStore extends Store {
         let session;
         try {
 
-            session = Session(JSON.parse(this._localStorage.getItem('_session') || '{}'), this.utils);
+            session = new Session(JSON.parse(this._localStorage.getItem('_session') || '{}'), this.utils);
         } catch (err) {
 
-            session = Session({}, this.utils);
+            session = new Session({}, this.utils);
         }
 
         // assign the save function
-        assign(session, 'save', functools.partial(this.saveSession.bind(this), session));
+        session.save = functools.partial(this.saveSession.bind(this), session);
 
         // return session
         return session;
