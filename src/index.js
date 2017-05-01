@@ -1,8 +1,6 @@
 import {ApplicationStore} from './backend';
-import user from './backend/resources/user';
 
 
-let store = new ApplicationStore({}, [user]);
+let store = new ApplicationStore();
 
-store.resources.User.register();
-
+console.log(store.resources);

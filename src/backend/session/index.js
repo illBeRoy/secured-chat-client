@@ -1,10 +1,13 @@
+import {Cryptography} from '../../utils/cryptography';
+
+
 class Session {
 
-    constructor({username, masterKey}, utils) {
+    constructor({username, masterKey}) {
 
         this.username = username || null;
         this.masterkey = masterKey | null;
-        this._utils = utils;
+        this._cryptography = new Cryptography();
     }
 
     get isLoggedIn() {
@@ -14,17 +17,22 @@ class Session {
 
     get authKey() {
 
-        return this._utils.cryptography.hash(this.masterkey, 1);
+        return this._cryptography.hash(this.masterkey, 1);
     }
 
     get encryptionKey() {
 
-        return this._utils.cryptography.hash(this.masterkey, 2);
+        return this._cryptography.hash(this.masterkey, 2);
     }
 
     get credentials() {
 
         return {username: this.username, password: this.authKey};
+    }
+
+    static getSession() {
+
+
     }
 
 }

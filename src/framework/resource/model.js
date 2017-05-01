@@ -1,7 +1,7 @@
 /**
  * The Store Class represents a stateful storage maintaining entity.
  */
-class _Store {
+class _ModelStore {
 
     static get updateHandlers() {
 
@@ -89,7 +89,7 @@ class _Store {
  * This is a meta class of Model that implements core functionality. It is not included in the actual Model class
  * itself in order to keep it clean.
  */
-class _Model extends _Store {
+class _Model extends _ModelStore {
 
     /**
      * @param obj {object} if given, will construct the instance from it (optional)

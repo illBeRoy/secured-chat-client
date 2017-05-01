@@ -5,10 +5,12 @@
     "author": "Roy Sommer <roy@sommer.co.il>",
     "version": "1.0.0",
     "dependencies": {
+        "application-data-path": "^0.0.1",
         "axios": "^0.16.1",
         "base-64": "^0.1.0",
         "bunyan": "^1.8.10",
         "electron": "^1.6.6",
+        "mkdirp": "^0.5.1",
         "node-forge": "^0.7.1",
         "range": "^0.0.3",
         "react": "^15.5.4",

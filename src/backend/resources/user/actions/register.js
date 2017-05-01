@@ -8,9 +8,9 @@ class RegisterAction extends Action {
 
     static classMethod = true;
 
-    static async onCall(cls, username, password) {
+    static async onCall(self, username, password, encryptedPrivateKey, publicKey) {
 
-        return await User.utils.api.request('get', '/users');
+        console.log(self.utils);
     }
 
 }

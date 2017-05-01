@@ -1,22 +1,35 @@
-import functools from '../../utils/functools';
+import * as functools from '../../utils/functools';
+import * as itertools from '../../utils/itertools';
+
+
+/**
+ * Serves as a localStorage mock.
+ * @type {object}
+ */
+const localStorageMock = {
+    getItem: () => '',
+    setItem: () => null,
+    clearItem: () => null
+};
 
 
 /**
  * Provides resource persistency and method mixin.
+ * This is the implementation class. For instructions regarding how to derive and use it, see the Store class.
+ * @see Store
  */
-class Store {
+class _Store {
 
-    /**
-     * @param resources {[module]} the resources to use with the store. Must contain two properties: `models` and `actions`
-     * @param localStorage {localStorage} a module that's providing localStorage functionality
-     */
-    constructor(resources, localStorage=null) {
+    constructor() {
 
         this._models = {};
-        this._localStorage = localStorage;
         this._onUpdateCallbacks = [];
 
-        this._attachResources(resources);
+        this._localStorage = this.constructor.localStorage;
+
+        this._augmentations = Object.assign({}, this.builtinAugmentations, this.constructor.augmentations);
+
+        this._attachResources(this.constructor.resources);
     }
 
     /**
@@ -65,10 +78,7 @@ class Store {
         // first enumerate all resources
         for (let resource of resources) {
 
-            for (let modelRef of Object.keys(resource.models)) {
-
-                // get model from ref
-                let model = resource.models[modelRef];
+            for (let [modelName, model] of itertools.object(resource.models)) {
 
                 // bind model to store with a bidirectional acknowledgement
                 this._models[model.name] = model;
@@ -78,17 +88,11 @@ class Store {
         //attach everything
         for (let resource of resources) {
 
-            for (let modelRef of Object.keys(resource.models)) {
+            for (let [modelRef, model] of itertools.object(resource.models)) {
 
-                // get model from ref
-                let model = resource.models[modelRef];
-
-                // if localStorage exists, attempt to load state from
-                if (this._localStorage) {
-
-                    let state = this._localStorage.getItem(model.name) || '{}';
-                    model.setStore(state);
-                }
+                // load state from persistent memory
+                let state = this._localStorage.getItem(model.name) || '{}';
+                model.setStore(state);
 
                 // attach handlers to model
                 model.onCreate(functools.partial(this._augmentModelInstance.bind(this), resource));
@@ -131,31 +135,34 @@ class Store {
      */
     _augmentObject(resource, target, isClass) {
 
-        // attach builtin augmentations
-        for (let augmentation of Object.keys(this.builtinAugmentations)) {
+        // attach augmentations
+        for (let [augmentationName, augmentation] of itertools.object(this._augmentations)) {
 
-            assign(target, augmentation, this.builtinAugmentations[augmentation]);
+            assign(target, augmentationName, augmentation);
         }
 
-        // attach actions - iterate over action modules
-        for (let actionRef of Object.keys(resource.actions)) {
+        // iterate over action classes
+        for (let [_, action] of itertools.object(resource.actions)) {
 
-            // iterate over action classes
-            for (let actionClass of Object.keys(resource.actions[actionRef])) {
+            // extract name, method and class method information
+            let actionName = action.__name__;
+            let actionMethod = action.onCall;
+            let isActionClassMethod = action.classMethod;
+            let actionRequirements = action.requirements;
 
-                // get actual action class
-                let action = resource.actions[actionRef][actionClass];
+            // ensure all builtin requirements exist
+            for (let req of actionRequirements) {
 
-                // extract name, method and class method information
-                let actionName = action.__name__;
-                let actionMethod = action.onCall;
-                let isActionClassMethod = action.classMethod;
+                if (!Object.keys(this._augmentations).includes(req)) {
 
-                // only assign action if it matches this being a class or an instance
-                if (isActionClassMethod == isClass) {
-
-                    assign(target, actionName, functools.partial(actionMethod, target));
+                    throw new Error(`Action "${actionName}" requires augmentation "${req}", which does not exist.`);
                 }
+            }
+
+            // only assign action if it matches this being a class or an instance
+            if (isActionClassMethod == isClass) {
+
+                assign(target, actionName, actionMethod.bind(target));
             }
         }
     }
@@ -171,10 +178,7 @@ class Store {
      */
     _modelsWereUpdated(modelName, state) {
 
-        if (this._localStorage) {
-
-            this._localStorage.setItem(modelName, state);
-        }
+        this._localStorage.setItem(modelName, state);
 
         for (let callback of this._onUpdateCallbacks) {
 
@@ -191,7 +195,7 @@ class Store {
  * @param field {string} name of the member to alter
  * @param value {*} the value to assign as that member
  */
-let assign = (obj, field, value) => {
+const assign = (obj, field, value) => {
 
     if (Object.keys(obj).includes(field)) {
 
@@ -200,6 +204,43 @@ let assign = (obj, field, value) => {
 
     obj[field] = value;
 };
+
+
+/**
+ * Provides resource persistency and method mixin.
+ *
+ * In order to use, one should derive this class and populate the relevant static fields.
+ */
+class Store extends _Store {
+
+    /**
+     * The resources static property defines the resources which the store should be using.
+     *
+     * A resource is a module which exports two properties: models and actions, where models exports classes deriving
+     * from the Resource.Model class, and actions exports classes deriving from the Resource.Action class.
+     * @type {[{models: module, actions: module}]}
+     */
+    static resources = [];
+
+    /**
+     * The augmentation static property defines the custom properties that will be attached to the models classes
+     * and instances, such as session and utilities.
+     * @type {object}
+     */
+    static augmentations = {};
+
+    /**
+     * The localStorage static property defines which persistent storage to use.
+     *
+     * The default value is actually a mock - data will not persistent over multiple sessions.
+     *
+     * An inheriting class should replace that property with its own means of storage.
+     *
+     * @type {object}
+     */
+    static localStorage = localStorageMock;
+
+}
 
 
 export {Store};

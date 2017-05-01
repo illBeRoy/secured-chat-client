@@ -1,4 +1,4 @@
-import * as register from './register';
+import {RegisterAction} from './register';
 
 
-export {register};
+export {RegisterAction};

@@ -33,15 +33,24 @@ class Action {
     static classMethod = false;
 
     /**
-     * The onCall function represents a method that's mixed into the model instance.
+     * The requirements are expected builtins that should be supplied by the store.
      *
-     * Unlike methods of an actual class, this function does not have an implicit `this`. Instead, the model instance
-     * is being referenced in the function as `instance` and is always passed as the first parameter.
+     * Without said requirements, the action class will not be utilized by the store.
      *
-     * @param instance {Model} a model instance
-     * @param args {array}
+     * Inheriting classes should override that property with the .
+     * @type {Array}
      */
-    static onCall(instance, ...args) {}
+    static requirements = [];
+
+    /**
+     * The onCall function represents a method that's mixed into the model instance or class.
+     *
+     * Despite the fact that it is being defined as a static method of the Action class, the context in which action
+     * methods are invoked is this of the model class or instance, meaning that you can refer to them as `this`: in
+     * instance methods `this` will refer to the model instance, and in class methods it will refer to the class.
+     *
+     */
+    static onCall() {}
 
 }
 
