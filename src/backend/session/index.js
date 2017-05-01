@@ -30,11 +30,6 @@ class Session {
         return {username: this.username, password: this.authKey};
     }
 
-    static getSession() {
-
-
-    }
-
 }
 
 

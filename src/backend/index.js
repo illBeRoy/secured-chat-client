@@ -6,6 +6,8 @@ import {Storage} from '../utils/storage';
 import {ApiClient} from '../utils/api-client';
 import {Cryptography} from '../utils/cryptography';
 
+import {Session} from './session';
+
 import resources from './resources';
 
 
@@ -13,10 +15,12 @@ let utils = {};
 utils.api = new ApiClient();
 utils.cryptography = new Cryptography();
 
+let session = new Session({});
+
 class ApplicationStore extends Store {
 
     static resources = resources;
-    static augmentations = {utils};
+    static augmentations = {utils, session};
     static localStorage = new Storage(appPath('woosh'));
 
 }
