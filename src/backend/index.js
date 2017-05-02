@@ -12,7 +12,7 @@ import resources from './resources';
 
 
 let utils = {};
-utils.api = new ApiClient();
+utils.api = new ApiClient('http://localhost:3000');
 utils.cryptography = new Cryptography();
 
 let session = new Session({});

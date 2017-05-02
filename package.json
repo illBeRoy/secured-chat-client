@@ -8,8 +8,8 @@
         "application-data-path": "^0.0.1",
         "axios": "^0.16.1",
         "base-64": "^0.1.0",
-        "bunyan": "^1.8.10",
         "electron": "^1.6.6",
+        "glob": "^7.1.1",
         "mkdirp": "^0.5.1",
         "node-forge": "^0.7.1",
         "range": "^0.0.3",
@@ -19,9 +19,10 @@
         "structs": "^0.0.0"
     },
     "scripts": {
-        "compile": "babel src --out-dir bin --source-maps",
+        "compile": "babel src --out-dir bin --source-maps --timeout 60000",
         "start": "node .",
-        "clean": "rimraf bin/*"
+        "clean": "rimraf bin/*",
+        "test": "mocha --compilers js:babel-core/register tests/integration.js"
     },
     "devDependencies": {
         "babel": "^6.23.0",
@@ -33,6 +34,11 @@
         "babel-preset-es2015": "^6.24.1",
         "babel-preset-es2017": "^6.24.1",
         "babel-preset-react": "^6.24.1",
+        "bunyan": "^1.8.10",
+        "bunyan-pretty-colors": "^0.1.7",
+        "chai": "^3.5.0",
+        "delay": "^2.0.0",
+        "mocha": "^3.3.0",
         "rimraf": "^2.6.1"
     },
     "main": "bin/index.js",

@@ -9,7 +9,8 @@ import * as itertools from '../../utils/itertools';
 const localStorageMock = {
     getItem: () => '',
     setItem: () => null,
-    clearItem: () => null
+    removeItem: () => null,
+    clear: () => null
 };
 
 
@@ -57,6 +58,15 @@ class _Store {
     get builtinAugmentations() {
 
         return {resources: this.resources};
+    }
+
+    /**
+     * Returns all augmentations supplied by this store.
+     * @returns {object}
+     */
+    get augmentations() {
+
+        return this._augmentations;
     }
 
     /**

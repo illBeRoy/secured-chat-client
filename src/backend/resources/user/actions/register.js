@@ -15,12 +15,16 @@ class RegisterAction extends Action {
 
     /**
      * @param username {string}
-     * @param password {string}
-     * @param privateKey {string}
-     * @param publicKey {string}
      * @returns {Promise.<User>}
      */
-    static async onCall(username, password, privateKey, publicKey) {
+    static async onCall(username) {
+
+        // fetch password from session
+        let password = this.session.authKey;
+
+        // generate key pair
+        let keyPair = await this.utils.cryptography.generateKeyPair();
+        let {privateKey, publicKey} = this.utils.cryptography.exportKeys(keyPair);
 
         // encrypt private key
         privateKey = this.utils.cryptography.encryptSym(this.session.encryptionKey, privateKey);
@@ -28,8 +32,15 @@ class RegisterAction extends Action {
         // attempt to register user
         let user = new User(await this.utils.api.request(
             'post',
-            '/user',
-            {body: {username, password, privateKey, publicKey}}
+            '/users',
+            {
+                body: {
+                    username: username,
+                    password: password,
+                    private_key: privateKey,
+                    public_key: publicKey
+                }
+            }
         ));
 
         // if succeeded, update session and save into store

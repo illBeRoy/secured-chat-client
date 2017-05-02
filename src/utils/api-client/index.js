@@ -35,9 +35,10 @@ class ApiClient {
 
         // build request description
         let request = {};
-        request['baseUrl'] = this._baseUrl;
+        request['baseURL'] = this._baseUrl;
         request['url'] = url;
         request['method'] = method.toLowerCase();
+        request['validateStatus'] = null;
         request['headers'] = headers;
         request['params'] = params;
 

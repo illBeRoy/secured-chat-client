@@ -126,6 +126,15 @@ class _Model extends _ModelStore {
     }
 
     /**
+     * Exports a json-ready object.
+     * @returns {object}
+     */
+    json() {
+
+        return this._export();
+    }
+
+    /**
      * Exports the instance as an immutable object.
      * @private
      */
