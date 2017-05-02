@@ -33,14 +33,7 @@ class RegisterAction extends Action {
         let user = new User(await this.utils.api.request(
             'post',
             '/users',
-            {
-                body: {
-                    username: username,
-                    password: password,
-                    private_key: privateKey,
-                    public_key: publicKey
-                }
-            }
+            { body: {username, password, privateKey, publicKey}}
         ));
 
         // if succeeded, update session and save into store

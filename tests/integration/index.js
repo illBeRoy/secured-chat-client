@@ -91,7 +91,7 @@ describe('integration tests', function() {
 
         // tear down server
         this._logger.debug('Killing server process');
-        this._server.kill('SIGKILL');
+        this._server.kill('SIGINT');
     });
 
     it('checks registration', async function() {

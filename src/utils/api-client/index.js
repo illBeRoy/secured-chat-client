@@ -1,4 +1,6 @@
 import axios from 'axios';
+import S from 'string';
+import * as itertools from '../itertools';
 
 
 /**
@@ -45,7 +47,8 @@ class ApiClient {
         // if not get, add data to payload
         if (method.toLowerCase() != 'get') {
 
-            request['data'] = body;
+            // transform body keys from thisNotation to this_notation
+            request['data'] = transformJsonKeyNames(body, (x) => S(x).underscore().s);
         }
 
         // send request
@@ -67,8 +70,11 @@ class ApiClient {
             );
         }
 
+        // now transform back from this_notation to thisNotation
+        let data = transformJsonKeyNames(result.data, (x) => S(x).camelize().s);
+
         // return
-        return result.data;
+        return data;
     }
 
 }
@@ -90,6 +96,36 @@ class ApiException extends Error {
     }
 
 }
+
+
+/**
+ * Transforms an object key names from one notation to another.
+ *
+ * Useful for changing the notation of json keys, in our case when making requests to the server.
+ *
+ * @param obj {*} the object to transform
+ * @param transformation {function(string):string} the transformation to apply on to the names
+ */
+const transformJsonKeyNames = (obj, transformation) => {
+
+    // if is array, transform each object in it
+    if (obj instanceof Array) {
+
+        return obj.map((x) => transformJsonKeyNames(x, transformation));
+    } else if (typeof obj == 'object') {
+
+        let transformedObj = {};
+        for (let [key, value] of itertools.object(obj)) {
+
+            transformedObj[transformation(key)] = transformJsonKeyNames(value, transformation);
+        }
+
+        return transformedObj;
+    } else {
+
+        return obj;
+    }
+};
 
 
 export {ApiClient};
