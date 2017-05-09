@@ -8,15 +8,16 @@ import childProcess from 'child_process';
 import appPath from 'application-data-path';
 import axios from 'axios';
 import delay from 'delay';
+import clearRequire from 'clear-require';
 
-import {ApplicationStore} from '../../bin/backend';
 import {Cryptography} from '../../bin/utils/cryptography';
+import {killTree} from '../../bin/utils/killtree';
 
 
 describe('integration tests', function() {
 
     const storagePath = appPath('woosh');
-    const serverExecutablePath = process.env['SERVER_PATH'];
+    const serverExecutablePath = process.env['SERVER_PATH'] || '../secured-chat-server';
     const stdout = new bunyanPretty();
 
     stdout.pipe(process.stdout);
@@ -46,7 +47,7 @@ describe('integration tests', function() {
         this._server = childProcess.spawn(
             '/usr/local/bin/python',
             ['scripts/integration_start.py'],
-            {shell: true, cwd: serverExecutablePath}
+            {cwd: serverExecutablePath, shell: true}
         );
 
         // wait for server to be ready
@@ -66,15 +67,11 @@ describe('integration tests', function() {
             }
         }
 
-        // create app instance
-        this._logger.debug('Creating application instance');
-        this._app = new ApplicationStore();
+        // attach app creation method
+        this._createApp = createApp;
 
-        // inject mocks
-        this._app.augmentations.utils.cryptography.generateKeyPair = this._generateKeyPair;
-
-        // set master key
-        this._app.augmentations.session.masterKey = 'bananas';
+        // create one app
+        this._app = this._createApp();
 
         // ready
         this._logger.warn('Beginning test')
@@ -89,16 +86,64 @@ describe('integration tests', function() {
 
         this._logger.warn('Tearing test down');
 
+        // clear application cache
+        this._logger.debug('Clearing application cache');
+        clearRequire.all();
+
         // tear down server
         this._logger.debug('Killing server process');
-        this._server.kill('SIGINT');
+        killTree(this._server.pid);
     });
+
+    function createApp() {
+
+        this._logger.debug('Creating application instance');
+
+        // create app instance
+        let app = new (require('../../bin/backend').ApplicationStore)();
+
+        // inject mocks
+        app.augmentations.utils.cryptography.generateKeyPair = this._generateKeyPair;
+
+        // set master key
+        app.augmentations.session.masterKey = 'bananas';
+
+        // clear application cache
+        clearRequire.all();
+
+        return app;
+    }
 
     it('checks registration', async function() {
 
-        this._logger.info('Attempting to register user "roysom"');
-
+        this._logger.info('Registering user');
         let user = await this._app.resources.User.register('roysom');
         expect(user.username).to.equal('roysom');
-    })
+    });
+
+    it('checks getting own user', async function() {
+
+        this._logger.info('Registering user');
+        await this._app.resources.User.register('roysom');
+
+        this._logger.info('Attempting to get own user');
+        let user = await this._app.resources.User.me();
+
+        expect(user.username).to.equal('roysom');
+    });
+
+    it('checks getting another user', async function() {
+
+        let roysApp = this._createApp();
+        let matansApp = this._createApp();
+
+        this._logger.info('Registering users');
+        await roysApp.resources.User.register('roysom');
+        await matansApp.resources.User.register('chernima');
+
+        this._logger.info('Attempting to get another user');
+        let user = await matansApp.resources.User.getByUsername('roysom');
+
+        expect(user.username).to.equal('roysom');
+    });
 });

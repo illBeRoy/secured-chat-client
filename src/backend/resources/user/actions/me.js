@@ -19,7 +19,7 @@ class GetMeAction extends Action {
     static async onCall() {
 
         // try to get user from local store
-        let [user] = User.query((x) => x.username == session.username);
+        let [user] = User.query((x) => x.username == this.session.username);
 
         // if couldn't, fetch from server
         if (!user) {
