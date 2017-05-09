@@ -7,10 +7,10 @@ import {Model} from '../../../framework/resource';
 class Message extends Model {
 
     static fields = [
-        'from_user',
-        'to_user',
+        'fromUser',
+        'toUser',
         'contents',
-        'sent_at'
+        'sentAt'
     ];
 
 }

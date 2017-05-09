@@ -3,6 +3,7 @@ import bunyan from 'bunyan';
 import bunyanPretty from 'bunyan-pretty-colors';
 
 import fs from 'fs';
+import rimraf from 'rimraf';
 import path from 'path';
 import childProcess from 'child_process';
 import appPath from 'application-data-path';
@@ -40,7 +41,7 @@ describe('integration tests', function() {
 
         // clear persistent data
         this._logger.debug('Clearing persistent data');
-        try { fs.rmdirSync(storagePath) } catch (err) {}
+        try { rimraf.sync(storagePath) } catch (err) {this._logger.warn(err);}
 
         // lift server
         this._logger.debug('Starting server instance');
@@ -68,7 +69,7 @@ describe('integration tests', function() {
         }
 
         // attach app creation method
-        this._createApp = createApp;
+        this._createApp = _createApp;
 
         // create one app
         this._app = this._createApp();
@@ -95,18 +96,24 @@ describe('integration tests', function() {
         killTree(this._server.pid);
     });
 
-    function createApp() {
+    function _createApp() {
 
         this._logger.debug('Creating application instance');
 
         // create app instance
-        let app = new (require('../../bin/backend').ApplicationStore)();
+        let {ApplicationStore} = require('../../src/backend');
 
-        // inject mocks
+        // inject localstorage location
+        ApplicationStore.localStorage._path = path.join(
+            ApplicationStore.localStorage._path,
+            Math.random().toString().split('.')[1]
+        );
+
+        // create instance
+        let app = new ApplicationStore();
+        //
+        // inject keypair mock
         app.augmentations.utils.cryptography.generateKeyPair = this._generateKeyPair;
-
-        // set master key
-        app.augmentations.session.masterKey = 'bananas';
 
         // clear application cache
         clearRequire.all();
@@ -114,17 +121,23 @@ describe('integration tests', function() {
         return app;
     }
 
+    /**
+     * Registers a user and asserts the resulting model.
+     */
     it('checks registration', async function() {
 
         this._logger.info('Registering user');
-        let user = await this._app.resources.User.register('roysom');
+        let user = await this._app.resources.User.register('roysom', 'bananas');
         expect(user.username).to.equal('roysom');
     });
 
+    /**
+     * Registers a user, fetches it from same app instance and asserts the resulting model.
+     */
     it('checks getting own user', async function() {
 
         this._logger.info('Registering user');
-        await this._app.resources.User.register('roysom');
+        await this._app.resources.User.register('roysom', 'bananas');
 
         this._logger.info('Attempting to get own user');
         let user = await this._app.resources.User.me();
@@ -132,18 +145,61 @@ describe('integration tests', function() {
         expect(user.username).to.equal('roysom');
     });
 
+    /**
+     * Registers a user and logs in as the user from a new app instance.
+     */
+    it('checks logging in', async function() {
+
+        this._logger.info('Registering user');
+        await this._app.resources.User.register('roysom', 'bananas');
+
+        this._logger.info('Attempting to login with another app instance');
+        let anotherAppInstance = this._createApp();
+        let user = await anotherAppInstance.resources.User.login('roysom', 'bananas');
+
+        expect(user.username).to.equal('roysom');
+    });
+
+    /**
+     * Registers two users and attempts to get one from the other's app.
+     */
     it('checks getting another user', async function() {
 
         let roysApp = this._createApp();
         let matansApp = this._createApp();
 
         this._logger.info('Registering users');
-        await roysApp.resources.User.register('roysom');
-        await matansApp.resources.User.register('chernima');
+        await roysApp.resources.User.register('roysom', 'bananas');
+        await matansApp.resources.User.register('chernima', 'bananas');
 
         this._logger.info('Attempting to get another user');
         let user = await matansApp.resources.User.getByUsername('roysom');
 
         expect(user.username).to.equal('roysom');
+    });
+
+    /**
+     * Registers two users and attempts to send a message from one to the other.
+     */
+    it('checks sending message', async function() {
+
+        let roysApp = this._createApp();
+        let matansApp = this._createApp();
+
+        this._logger.info('Registering users');
+        await roysApp.resources.User.register('roysom', 'bananas');
+        await matansApp.resources.User.register('chernima', 'bananas');
+
+        this._logger.info('Sending message from chernima to roysom');
+        let recipient = await matansApp.resources.User.getByUsername('roysom');
+        await recipient.sendMessage('hello, world!');
+
+        this._logger.info('Polling server for message');
+        let newMessagesArrived = await roysApp.resources.Message.poll();
+        expect(newMessagesArrived).to.equal(true);
+
+        this._logger.info('Confirming message integrity');
+        let [message] = roysApp.resources.Message.query((x) => x.fromUser == 'chernima');
+        expect(message.contents).to.equal('hello, world!');
     });
 });

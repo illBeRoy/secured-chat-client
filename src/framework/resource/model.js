@@ -161,7 +161,7 @@ class _Model extends _ModelStore {
             this[field] = obj[field];
         }
 
-        this.id = obj.id;
+        this.id = obj.id || null;
     }
 
     /**

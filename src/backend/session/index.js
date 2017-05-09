@@ -6,7 +6,7 @@ class Session {
     constructor({username, masterKey}) {
 
         this.username = username || null;
-        this.masterKey = masterKey | null;
+        this.masterKey = masterKey || null;
         this._cryptography = new Cryptography();
     }
 

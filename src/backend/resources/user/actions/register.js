@@ -15,12 +15,16 @@ class RegisterAction extends Action {
 
     /**
      * @param username {string}
+     * @param password {string}
      * @returns {Promise.<User>}
      */
-    static async onCall(username) {
+    static async onCall(username, password) {
 
-        // fetch password from session
-        let password = this.session.authKey;
+        // set master key
+        this.session.masterKey = password;
+
+        // update password to be authKey from session
+        password = this.session.authKey;
 
         // generate key pair
         let keyPair = await this.utils.cryptography.generateKeyPair();

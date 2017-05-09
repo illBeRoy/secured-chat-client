@@ -25,7 +25,7 @@ class ApiClient {
      * @param params {object} querystring params to be sent (optional)
      * @param credentials {{username: string, password: string}} credentials to be used
      */
-    async request(method, url, {body, headers, params, credentials}) {
+    async request(method, url, {body, headers, params, credentials}={}) {
 
         // if credentials were passed, create the corresponding headers
         if (credentials) {
@@ -112,7 +112,7 @@ const transformJsonKeyNames = (obj, transformation) => {
     if (obj instanceof Array) {
 
         return obj.map((x) => transformJsonKeyNames(x, transformation));
-    } else if (typeof obj == 'object') {
+    } else if (obj && typeof obj == 'object') {
 
         let transformedObj = {};
         for (let [key, value] of itertools.object(obj)) {

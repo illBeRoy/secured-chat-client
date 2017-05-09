@@ -113,7 +113,7 @@ class Cryptography {
         let cipher = decryptionKey.decrypt(decodedStr.substr(512, 512), 'RSA-OAEP');
 
         // decrpyt message
-        let message = c.decryptSym(cipher, decodedStr.substr(1024));
+        let message = this.decryptSym(cipher, decodedStr.substr(1024));
 
         // confirm signature and mac
         if (!verificationKey.verify(forge.sha1.create().update(message).digest().bytes(), decodedStr.substr(0, 512))) {
