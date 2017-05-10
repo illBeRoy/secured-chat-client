@@ -1,3 +1,6 @@
+import path from 'path';
+
+
 /**
  * The Page class describes a single page within our application.
  *
@@ -24,10 +27,26 @@ class Page {
     static src = '';
 
     /**
-     * Window
+     * The title of the page.
+     * @type {string}
+     */
+    static title = '';
+
+    /**
+     * Window styling options
      * @type {{}}
      */
     static windowOptions = {};
+
+    /**
+     * Creates a reference to an src file, relative to the inheriting page module.
+     * @param src {string}
+     * @returns {string}
+     */
+    static require(src) {
+
+        return path.join(path.relative(__dirname, path.dirname(module.parent.parent.filename)), src);
+    }
 
 }
 

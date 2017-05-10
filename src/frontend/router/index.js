@@ -1,5 +1,5 @@
+import {Router} from './router';
 import {Page} from './page';
-import {} from './router';
 
 
-export {Page};
+export {Router, Page};
