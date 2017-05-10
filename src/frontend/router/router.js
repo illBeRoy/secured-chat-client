@@ -98,6 +98,7 @@ class Router {
         // instantiate new window
         let nextWindow = new ScriptWindow(windowOptions);
         nextWindow.loadURL(page.src);
+        nextWindow.browserWindow.webContents.openDevTools();
 
         // unload previous window
         if (this._window) {

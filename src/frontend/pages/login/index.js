@@ -5,11 +5,12 @@ class LoginPage extends Page {
 
     static path = '/login';
     static title = 'Login';
-    static src = Page.require('pages/login/component.js')
+    static src = Page.require('pages/login/component.js');
     static windowOptions = {
-        width: 622,
-        height: 576,
-        frame: false
+        width: 311,
+        height: 288,
+        frame: false,
+        transparent: true
     }
 
 }
