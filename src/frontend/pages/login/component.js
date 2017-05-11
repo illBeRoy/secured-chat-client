@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 
 import {Colors} from '../../theme';
+import {Textbox} from './components/textbox';
 
 
 class Page extends Component {
@@ -45,6 +46,8 @@ class Page extends Component {
                         zIndex: 1
                     }}
                 >
+
+                    <Textbox placeholder="Username"/>
 
                 </div>
 
