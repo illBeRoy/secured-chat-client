@@ -8,6 +8,7 @@ class Textbox extends Component {
         defaultValue: React.PropTypes.string,
         type: React.PropTypes.oneOf(['text', 'password']),
         color: React.PropTypes.string,
+        enabled: React.PropTypes.bool,
         inactiveColor: React.PropTypes.string,
         onChange: React.PropTypes.func
     };
@@ -17,6 +18,7 @@ class Textbox extends Component {
         defaultValue: '',
         type: 'text',
         color: '#000000',
+        enabled: true,
         inactiveColor: '#999999',
         onChange: (t) => {}
     };
@@ -55,7 +57,9 @@ class Textbox extends Component {
                     width: '100%',
                     height: '100%',
                     color: this.textColor,
-                    textAlign: 'left'
+                    textAlign: 'left',
+                    fontSize: 13,
+                    lineHeight: '26px'
                 }}
             >
                 {this.props.placeholder}
@@ -68,15 +72,16 @@ class Textbox extends Component {
         return (
             <div
                 style={
-                    {
+                    Object.assign({
                         position: 'relative',
                         minWidth: 30,
                         height: 26,
                         overflow: 'hidden',
                         borderBottomStyle: 'solid',
                         borderBottomWidth: 1,
-                        borderBottomColor: this.textColor
-                    }}
+                        borderBottomColor: this.textColor,
+                        transition: '.4s ease border-bottom-color'
+                    }, this.props.style)}
             >
                 {this.renderPlaceholder()}
                 <input
@@ -93,6 +98,7 @@ class Textbox extends Component {
                         outline: 'none',
                         background: 'transparent'
                     }}
+                    disabled={!this.props.enabled}
                     onInput={this.onChange.bind(this)}
                 />
             </div>

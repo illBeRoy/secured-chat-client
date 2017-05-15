@@ -39,6 +39,11 @@ class Page {
     static windowOptions = {};
 
     /**
+     * Head tags
+     */
+    static headTags = [];
+
+    /**
      * Creates a reference to an src file, relative to the inheriting page module.
      * @param src {string}
      * @returns {string}

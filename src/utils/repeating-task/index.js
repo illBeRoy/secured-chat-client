@@ -31,7 +31,7 @@ class RepeatingTask {
      * Start performing the given task.
      * @param interval {number} interval between executions in ms
      * @param immediately {boolean} whether or not to execute the task right now
-     * @return {boolean} whether or not the task was started. false will be returned if the task is already running.
+     * @returns {boolean} whether or not the task was started. false will be returned if the task is already running.
      */
     start(interval, immediately=true) {
 

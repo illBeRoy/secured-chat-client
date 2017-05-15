@@ -1,5 +1,6 @@
 import URL from 'url';
 import ScriptWindow from 'electron-script-window';
+import {debug} from '../../utils/debug';
 
 
 class Router {
@@ -97,8 +98,14 @@ class Router {
 
         // instantiate new window
         let nextWindow = new ScriptWindow(windowOptions);
+        page.headTags.forEach((tag) => nextWindow.addHeadTag(tag));
         nextWindow.loadURL(page.src);
-        nextWindow.browserWindow.webContents.openDevTools();
+
+        // if debug, show inspector
+        if (debug()) {
+
+            nextWindow.browserWindow.webContents.openDevTools();
+        }
 
         // unload previous window
         if (this._window) {

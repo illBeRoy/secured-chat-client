@@ -36,7 +36,7 @@ class Cryptography {
     /**
      * Generates an RSA private\public key pair.
      * Does so asynchronously.
-     * @return {Promise.<{privateKey:object, publicKey:object}>}
+     * @returns {Promise.<{privateKey:object, publicKey:object}>}
      */
     generateKeyPair() {
 
