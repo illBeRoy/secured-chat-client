@@ -37,6 +37,11 @@ class Button extends Component {
         return this.state.pressed? 'rgba(0,0,0,.05)' : 'rgba(0,0,0,0)'
     }
 
+    get transition() {
+
+        return this.state.pressed? '': '0.4s ease background';
+    }
+
     onTouchStart() {
 
         if (this.props.enabled) {
@@ -73,7 +78,7 @@ class Button extends Component {
                             cursor: this.props.enabled? 'pointer': 'default',
                             color: this.textColor,
                             background: this.background,
-                            transition: '0.4s ease background'
+                            transition: this.transition
                         },
                         this.props.style
                     )

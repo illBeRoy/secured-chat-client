@@ -9,4 +9,5 @@
 
     font-family: opensans;
     user-select: none;
+    -webkit-user-drag: none;
 }

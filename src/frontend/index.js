@@ -1,12 +1,13 @@
 import {Router} from './router';
 import {LoginPage} from './pages/login';
+import {ChatPage} from './pages/chat';
 
 
 class ApplicationRouter extends Router {
 
     static initialPath = '/login?a=5';
-    static pages = [LoginPage];
-    static headers = {a: 77};
+    static pages = [LoginPage, ChatPage];
+    static headers = {};
 
 }
 
