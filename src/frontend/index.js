@@ -5,7 +5,7 @@ import {ChatPage} from './pages/chat';
 
 class ApplicationRouter extends Router {
 
-    static initialPath = '/login?a=5';
+    static initialPath = '/chat?user=roysom&password=bananas';
     static pages = [LoginPage, ChatPage];
     static headers = {};
 
