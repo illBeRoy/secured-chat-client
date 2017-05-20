@@ -12,6 +12,7 @@
         "electron-script-window": "^0.1.1",
         "glob": "^7.1.1",
         "mkdirp": "^0.5.1",
+        "moment": "^2.18.1",
         "node-forge": "^0.7.1",
         "range": "^0.0.3",
         "react": "^15.5.4",

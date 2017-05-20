@@ -1,0 +1,87 @@
+[
+  {
+    "incoming": true,
+    "content": "howdy mate!",
+    "time": 1495312638253
+  },
+  {
+    "incoming": false,
+    "content": "yo",
+    "time": 1495312648253
+  },
+  {
+    "incoming": false,
+    "content": "sup?",
+    "time": 1495312678253
+  },
+  {
+    "incoming": true,
+    "content": "not much bruh",
+    "time": 1495312718253
+  },
+  {
+    "incoming": true,
+    "content": "killin time",
+    "time": 1495312718253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": false,
+    "content": "this is just a freakishly long line of text so I could check out the maximum width of a chat bubble",
+    "time": 1495312729253
+  },
+  {
+    "incoming": true,
+    "content": "killin time",
+    "time": 1495312718253
+  },
+  {
+    "incoming": true,
+    "content": "killin time",
+    "time": 1495312718253
+  },
+  {
+    "incoming": true,
+    "content": "killin time",
+    "time": 1495312718253
+  }
+]

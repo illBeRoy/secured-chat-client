@@ -8,7 +8,9 @@ class ChatPage extends Page {
     static src = Page.require('pages/chat/component.js');
     static headTags = ['<link rel="stylesheet" type="text/css" href="../../../../assets/opensans.css">'];
     static windowOptions = {
-        titleBarStyle: 'hidden-inset'
+        titleBarStyle: 'hidden-inset',
+        width: 1150,
+        height: 786
     }
 
 }

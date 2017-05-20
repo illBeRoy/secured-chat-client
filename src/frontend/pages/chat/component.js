@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 
 import {Colors} from '../../theme';
+import {Sidebar} from './components/sidebar';
+import {Contacts} from './components/contacts';
+import {ChatRoll} from './components/chat-roll';
 
 
 class Page extends Component {
@@ -15,7 +18,25 @@ class Page extends Component {
 
     render() {
 
-        return (<p>cool {window.params.user}, {window.params.password}</p>)
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}
+            >
+                <Sidebar
+                    buttons={[
+                        {title: 'settings', image: '../../../../assets/cog.svg', onPress: ()=>{}}
+                    ]}
+                />
+
+                <Contacts contacts={require('../../../../fixtures/contacts.json')}/>
+
+                <ChatRoll messages={require('../../../../fixtures/chat.json')} />
+
+            </div>
+        )
     }
 }
 
