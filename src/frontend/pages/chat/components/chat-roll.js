@@ -20,7 +20,7 @@ class ChatRoll extends Component {
             position: 'relative',
             display: 'inline-block',
             left: 15,
-            maxWidth: 320,
+            maxWidth: '55%',
             padding: 13,
             backgroundColor: Colors.SecondaryLight,
             borderRadius: 8,
@@ -37,7 +37,7 @@ class ChatRoll extends Component {
             position: 'relative',
             display: 'inline-block',
             right: 15,
-            maxWidth: 320,
+            maxWidth: '50%',
             padding: 13,
             backgroundColor: Colors.PrimaryLight,
             borderRadius: 8,
@@ -121,7 +121,8 @@ class ChatRoll extends Component {
                         position: 'relative',
                         display: 'flex',
                         flexDirection: 'column-reverse',
-                        paddingTop: 5
+                        paddingTop: 5,
+                        paddingBottom: 15
                     }}
                 >
 

@@ -5,6 +5,7 @@ import {Colors} from '../../theme';
 import {Sidebar} from './components/sidebar';
 import {Contacts} from './components/contacts';
 import {ChatRoll} from './components/chat-roll';
+import {TextInput} from './components/input';
 
 
 class Page extends Component {
@@ -33,7 +34,17 @@ class Page extends Component {
 
                 <Contacts contacts={require('../../../../fixtures/contacts.json')}/>
 
-                <ChatRoll messages={require('../../../../fixtures/chat.json')} />
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flexGrow: 1,
+                        height: '100%'
+                    }}
+                >
+                    <ChatRoll messages={require('../../../../fixtures/chat.json')} />
+                    <TextInput />
+                </div>
 
             </div>
         )
