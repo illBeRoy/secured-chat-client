@@ -17,10 +17,9 @@ class ChatRoll extends Component {
     get incomingMessageStyle() {
 
         return {
-            position: 'absolute',
+            position: 'relative',
             display: 'inline-block',
             left: 15,
-            top: 0,
             maxWidth: 320,
             padding: 13,
             backgroundColor: Colors.SecondaryLight,
@@ -35,10 +34,9 @@ class ChatRoll extends Component {
     get outgoingMessageStyle() {
 
         return {
-            position: 'absolute',
+            position: 'relative',
             display: 'inline-block',
             right: 15,
-            top: 0,
             maxWidth: 320,
             padding: 13,
             backgroundColor: Colors.PrimaryLight,
@@ -58,28 +56,48 @@ class ChatRoll extends Component {
                 style={{
                     position: 'relative',
                     width: '100%',
-                    height: 63
+                    minHeight: 63
                 }}
             >
 
-                <div style={incoming? this.incomingMessageStyle : this.outgoingMessageStyle}>
-                    {content}
-                </div>
-
-                <div
+                <table
                     style={{
-                        position: 'absolute',
-                        bottom: 5,
-                        left: 15,
-                        right: 15,
-                        height: 14,
-                        color: '#999999',
-                        fontSize: 10,
+                        width: '100%',
+                        border: 'none',
+                        borderSpacing: 0,
                         textAlign: incoming? 'left' : 'right'
                     }}
                 >
-                    {moment(time).format('h:mm A')}
-                </div>
+
+                    <tr style={{height: 5}}><td></td></tr>
+
+                    <tr>
+                       <td>
+                           <div style={incoming? this.incomingMessageStyle : this.outgoingMessageStyle}>
+                               {content}
+                           </div>
+                       </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div
+                                style={{
+                                    position: 'relative',
+                                    marginLeft: 15,
+                                    marginRight: 15,
+                                    height: 14,
+                                    color: '#999999',
+                                    fontSize: 10,
+                                    textAlign: incoming? 'left' : 'right'
+                                }}
+                            >
+                                {moment(time).format('h:mm A')}
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
 
             </div>
         );
@@ -91,18 +109,25 @@ class ChatRoll extends Component {
 
             <div
                 style={{
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column-reverse',
                     flexGrow: 1,
-                    height: '100%',
+                    position: 'relative',
                     overflowX: 'hidden',
-                    overflowY: 'scroll'
+                    overflowY: 'scroll',
+                    height: '100%'
                 }}
             >
+                <div
+                    style={{
+                        position: 'relative',
+                        display: 'flex',
+                        flexDirection: 'column-reverse',
+                        paddingTop: 5
+                    }}
+                >
 
-                {this.props.messages.reverse().map(this.renderChatBubble.bind(this))}
+                    {this.props.messages.reverse().map(this.renderChatBubble.bind(this))}
 
+                </div>
             </div>
         );
     }
