@@ -5,6 +5,14 @@ import {Colors} from '../../../theme';
 
 class TextInput extends Component {
 
+    static propTypes = {
+        onSubmit: React.PropTypes.func
+    };
+
+    static defaultProps = {
+        onSubmit: (val) => {}
+    };
+
     constructor(props) {
 
         super(props);
@@ -16,6 +24,15 @@ class TextInput extends Component {
     get canSendMessage() {
 
         return !!(this.state.message);
+    }
+
+    submit() {
+
+        if (this.canSendMessage) {
+
+            this.props.onSubmit(this.state.message);
+            this.setMessage('');
+        }
     }
 
     setMessage(message) {
@@ -44,6 +61,7 @@ class TextInput extends Component {
                     type="text"
                     placeholder="Write something..."
                     onInput={(e) => {this.setMessage(e.target.value)}}
+                    value={this.state.message}
                     style={{
                         flexGrow: 1,
                         border: 'none',
@@ -52,6 +70,7 @@ class TextInput extends Component {
                         paddingLeft: 16,
                         paddingRight: 16
                     }}
+                    onKeyDown={(e) => {if (e.keyCode == 13) this.submit()}}
                 />
 
                 <div
@@ -64,6 +83,7 @@ class TextInput extends Component {
                         backgroundRepeat: 'no-repeat',
                         cursor: this.canSendMessage? 'pointer' : 'default'
                     }}
+                    onClick={this.submit.bind(this)}
                 >
 
                 </div>

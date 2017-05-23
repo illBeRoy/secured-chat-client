@@ -7,18 +7,20 @@ import {Colors} from '../../../theme';
 class Contacts extends Component {
 
     static propTypes = {
-        contacts: React.PropTypes.array
+        contacts: React.PropTypes.array,
+        onSelect: React.PropTypes.func
     };
 
     static defaultProps = {
-        contacts: []
+        contacts: [],
+        onSelect: (name) => {}
     };
 
     renderContact({name, message, time}, index) {
 
         return (
 
-            <Contact key={index} name={name} message={message} time={time} />
+            <Contact key={index} name={name} message={message} time={time} onPress={this.props.onSelect} />
         );
     }
 
@@ -55,7 +57,12 @@ class Contact extends Component {
     static propTypes = {
         name: React.PropTypes.string,
         message: React.PropTypes.string,
-        time: React.PropTypes.number
+        time: React.PropTypes.number,
+        onPress: React.PropTypes.func
+    };
+
+    static defaultProps = {
+        onPress: (val) => {}
     };
 
     constructor(props) {
@@ -70,6 +77,11 @@ class Contact extends Component {
         this.setState({hover: isHovering});
     }
 
+    onClick() {
+
+        this.props.onPress(this.props.name);
+    }
+
     render() {
 
         return (
@@ -79,10 +91,12 @@ class Contact extends Component {
                     position: 'relative',
                     width: '100%',
                     height: 68,
+                    cursor: 'default',
                     backgroundColor: this.state.hover? 'rgba(0,0,0,.025)' : 'rgba(0,0,0,0)'
                 }}
                 onMouseEnter={this.setHovering.bind(this, true)}
                 onMouseLeave={this.setHovering.bind(this, false)}
+                onClick={this.onClick.bind(this)}
             >
                 <div
                     style={{

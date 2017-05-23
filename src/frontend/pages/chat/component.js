@@ -32,7 +32,7 @@ class Page extends Component {
                     ]}
                 />
 
-                <Contacts contacts={require('../../../../fixtures/contacts.json')}/>
+                <Contacts contacts={require('../../../../fixtures/contacts.json')} onSelect={logInMain}/>
 
                 <div
                     style={{
@@ -43,7 +43,7 @@ class Page extends Component {
                     }}
                 >
                     <ChatRoll messages={require('../../../../fixtures/chat.json')} />
-                    <TextInput />
+                    <TextInput onSubmit={logInMain} />
                 </div>
 
             </div>
@@ -51,5 +51,10 @@ class Page extends Component {
     }
 }
 
+
+function logInMain(t) {
+
+    require('electron').remote.getGlobal('console').log(t);
+}
 
 render(<Page />, document.getElementById('root'));

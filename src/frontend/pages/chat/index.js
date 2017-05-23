@@ -10,7 +10,9 @@ class ChatPage extends Page {
     static windowOptions = {
         titleBarStyle: 'hidden-inset',
         width: 1150,
-        height: 786
+        height: 786,
+        minWidth: 930,
+        minHeight: 340
     }
 
 }
