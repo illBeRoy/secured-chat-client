@@ -24,7 +24,7 @@
     },
     "scripts": {
         "compile": "babel src --out-dir bin --source-maps --timeout 60000",
-        "start": "node .",
+        "start": "electron .",
         "clean": "rimraf bin/*",
         "test": "mocha --compilers js:babel-core/register tests/integration/index.js"
     },
