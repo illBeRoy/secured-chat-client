@@ -11,6 +11,8 @@ class Loader extends Component {
         color: '#009688'
     };
 
+    static size = 40;
+
     render() {
 
         return (
@@ -42,8 +44,8 @@ class Loader extends Component {
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     version="1.1"
-                    width={40}
-                    height={40}
+                    width={this.constructor.size}
+                    height={this.constructor.size}
                     style={{
                         fill: 'transparent',
                         stroke: this.props.color,
@@ -51,7 +53,11 @@ class Loader extends Component {
                         animation: 'dash 2s ease infinite, rotate 2s linear infinite'
                     }}
                 >
-                    <circle cx={20} cy={20} r={15} />
+                    <circle
+                        cx={this.constructor.size / 2}
+                        cy={this.constructor.size / 2}
+                        r={this.constructor.size / 2 - 5}
+                    />
                 </svg>
 
             </div>

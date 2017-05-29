@@ -23,8 +23,9 @@ class Router {
      */
     static headers = {};
 
-    constructor() {
+    constructor(headers={}) {
 
+        this._headers = Object.assign({}, this.constructor.headers, headers);
         this._pages = {};
         this._stack = [];
         this._window = null;
@@ -85,7 +86,7 @@ class Router {
 
         // set global injections
         global.__router__injected__reference = this;
-        global.__router__injected__headers = this.constructor.headers;
+        global.__router__injected__headers = this._headers;
         global.__router__injected__params = query || {};
 
         // set window options, including title and injection withdrawal script

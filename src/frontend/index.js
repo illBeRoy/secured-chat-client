@@ -12,5 +12,4 @@ class ApplicationRouter extends Router {
 }
 
 
-let electron = require('electron');
-electron.app.on('ready', () => new ApplicationRouter());
+export {ApplicationRouter};

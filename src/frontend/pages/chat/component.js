@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 
 import {Colors} from '../../theme';
+import {Loader} from '../shared-components/loader';
 import {Sidebar} from './components/sidebar';
 import {Contacts} from './components/contacts';
 import {ChatRoll} from './components/chat-roll';
@@ -14,10 +15,41 @@ class Page extends Component {
 
         super(props);
         this.state = {};
-        this.state.loading = false;
+        this.state.loading = true;
     }
 
-    render() {
+    async componentWillMount() {
+
+        try {
+
+            await window.headers.store.resources.User.login(window.params.user, window.params.password);
+            this.setState({loading: false});
+        } catch (err) {
+
+            //todo: update ._.
+            alert('can\'t login!');
+        }
+    }
+
+    renderLoading() {
+
+        return (
+
+            <div
+                style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    marginLeft: -Loader.size / 2,
+                    marginTop: -Loader.size / 2
+                }}
+            >
+                <Loader color={Colors.Primary} />
+            </div>
+        )
+    }
+
+    renderChat() {
 
         return (
             <div
@@ -48,6 +80,17 @@ class Page extends Component {
 
             </div>
         )
+    }
+
+    render() {
+
+        if (this.state.loading) {
+
+            return this.renderLoading();
+        } else {
+
+            return this.renderChat();
+        }
     }
 }
 
