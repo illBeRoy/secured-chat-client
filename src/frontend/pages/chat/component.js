@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 
+import {RepeatingTask} from '../../../utils/repeating-task';
+import * as itertools from '../../../utils/itertools';
+
 import {Colors} from '../../theme';
 import {Loader} from '../shared-components/loader';
 import {Sidebar} from './components/sidebar';
@@ -15,20 +18,57 @@ class Page extends Component {
 
         super(props);
         this.state = {};
-        this.state.loading = true;
+        this.state.ready = false;
+        this.state.user = null;
     }
 
-    async componentWillMount() {
+    get contactList() {
 
-        try {
+        // get all users
+        let users = window.headers.store.resources.User.query((x) => x.username != this.state.user.username);
 
-            await window.headers.store.resources.User.login(window.params.user, window.params.password);
-            this.setState({loading: false});
-        } catch (err) {
+        // for each user fetch all data needed for its contact entry
+        let contacts = users.map((user) => {
 
-            //todo: update ._.
-            alert('can\'t login!');
-        }
+            // fetch all messages sent to or from said user
+            let messages = window.headers.store.resources.Messages.query((x) => {
+
+                return x.fromUser == user.username || x.toUser == user.username
+            });
+
+            // get most recent message
+            let mostRecentMessage = itertools.max(messages, (a, b) => a.id - b.id);
+
+            // return contact representation
+            return {
+                name: user.name,
+                message: mostRecentMessage.contents,
+                time: mostRecentMessage.sentAt
+            }
+        });
+
+        // sort by most recent message and return
+        return contacts.sort((a, b) => a.time - b.time);
+    }
+
+    componentWillMount() {
+
+        this.sync();
+    }
+
+    async sync() {
+
+        // sync self
+        await window.headers.store.resources.User.login(window.params.user, window.params.password);
+
+        // sync messages
+        await window.headers.store.resources.Message.poll();
+
+        // update state
+        this.setState({
+            ready: true,
+            user: await window.headers.store.resources.User.me()
+        });
     }
 
     renderLoading() {
@@ -64,7 +104,7 @@ class Page extends Component {
                     ]}
                 />
 
-                <Contacts contacts={require('../../../../fixtures/contacts.json')} onSelect={logInMain}/>
+                <Contacts contacts={this.contactList} onSelect={logInMain}/>
 
                 <div
                     style={{
@@ -84,12 +124,12 @@ class Page extends Component {
 
     render() {
 
-        if (this.state.loading) {
-
-            return this.renderLoading();
-        } else {
+        if (this.state.ready) {
 
             return this.renderChat();
+        } else {
+
+            return this.renderLoading();
         }
     }
 }

@@ -14,12 +14,12 @@ class Page extends Component {
 
         super(props);
         this.state = {};
-        this.state.loading = false;
+        this.state.ready = false;
     }
 
     get interactable() {
 
-        return !this.state.loading;
+        return !this.state.ready;
     }
 
     get headerComponent() {
@@ -57,7 +57,7 @@ class Page extends Component {
             <Button
                 text="Login"
                 enabled={this.interactable}
-                onPress={()=>{this.setState({loading: true})}}
+                onPress={()=>{this.setState({ready: true})}}
                 style={{
                     position: 'absolute',
                     left: 44,
@@ -120,7 +120,7 @@ class Page extends Component {
                         }}
                     />
 
-                    {this.state.loading? this.loaderComponent : this.loginButtonComponent}
+                    {this.state.ready? this.loaderComponent : this.loginButtonComponent}
 
                 </div>
 

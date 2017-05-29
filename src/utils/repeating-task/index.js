@@ -114,7 +114,10 @@ class RepeatingTask {
         } catch (err) {
 
             // if the class was not instantiated as robust, let the exception propagate.
-            if (!this._robust) {
+            if (this._robust) {
+
+                console.warn('Exception caught during RepeatingTask', err);
+            } else {
 
                 throw err;
             }
