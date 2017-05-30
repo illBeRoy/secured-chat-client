@@ -177,6 +177,7 @@ class _Model extends _ModelStore {
 
             let instance = new this(result);
             instance.onLoad();
+            return instance;
         } else{
 
             throw new Error(`Record not found (id: ${id})`);

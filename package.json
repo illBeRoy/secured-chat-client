@@ -26,6 +26,7 @@
         "compile": "babel src --out-dir bin --source-maps --timeout 60000",
         "start": "electron .",
         "clean": "rimraf bin/*",
+        "server-fixtures": "babel-node fixtures/install-server-fixtures.js",
         "test": "mocha --compilers js:babel-core/register tests/integration/index.js"
     },
     "devDependencies": {

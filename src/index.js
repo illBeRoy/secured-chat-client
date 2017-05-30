@@ -7,8 +7,5 @@ electron.app.on('ready', async () => {
 
     let store = new ApplicationStore();
 
-    console.log('logging in with roysom');
-    await store.resources.User.login('roysom', 'bananas');
-
     let router = new ApplicationRouter({store});
 });

@@ -88,7 +88,7 @@ class _Store {
         // first enumerate all resources
         for (let resource of resources) {
 
-            for (let [modelName, model] of itertools.object(resource.models)) {
+            for (let [_, model] of itertools.object(resource.models)) {
 
                 // bind model to store with a bidirectional acknowledgement
                 this._models[model.name] = model;
@@ -98,7 +98,7 @@ class _Store {
         //attach everything
         for (let resource of resources) {
 
-            for (let [modelRef, model] of itertools.object(resource.models)) {
+            for (let [_, model] of itertools.object(resource.models)) {
 
                 // load state from persistent memory
                 let state = this._localStorage.getItem(model.name) || '{}';
