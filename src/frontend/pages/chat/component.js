@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 
+import {ApplicationStore} from '../../../backend';
 import {RepeatingTask} from '../../../utils/repeating-task';
 import * as itertools from '../../../utils/itertools';
 
@@ -17,58 +18,118 @@ class Page extends Component {
     constructor(props) {
 
         super(props);
+
+        this._store = new ApplicationStore();
+        this._syncTask = null;
+
         this.state = {};
         this.state.ready = false;
-        this.state.user = null;
+        this.state.me = null;
+        this.state.contact = null;
     }
 
     get contactList() {
 
         // get all users
-        let users = window.headers.store.resources.User.query((x) => x.username != this.state.user.username);
+        let users = this._store.resources.User.query((x) => x.username != this.state.me.username);
 
         // for each user fetch all data needed for its contact entry
         let contacts = users.map((user) => {
 
             // fetch all messages sent to or from said user
-            let messages = window.headers.store.resources.Messages.query((x) => {
+            let messages = this._store.resources.Message.query((x) => {
 
                 return x.fromUser == user.username || x.toUser == user.username
             });
 
+            // if no messages, return null
+            if (messages.length == 0) {
+
+                return null;
+            }
+
             // get most recent message
-            let mostRecentMessage = itertools.max(messages, (a, b) => a.id - b.id);
+            let mostRecentMessage = itertools.max(messages, (a, b) => a.time - b.time);
 
             // return contact representation
             return {
-                name: user.name,
+                name: user.username,
                 message: mostRecentMessage.contents,
                 time: mostRecentMessage.sentAt
             }
         });
 
         // sort by most recent message and return
-        return contacts.sort((a, b) => a.time - b.time);
+        return contacts.filter((x) => x != null).sort((a, b) => a.time - b.time);
     }
 
-    componentWillMount() {
+    async componentWillMount() {
 
-        this.sync();
+        // sync one time
+        await this.sync();
+
+        // select most recent contact, if there is
+        if (this.contactList.length > 0) {
+
+            this.selectContact(this.contactList[0].name);
+        }
+
+        this.setState({ready: true});
+
+        this._syncTask = new RepeatingTask(this.sync.bind(this));
+        this._syncTask.start(5000, false);
+    }
+
+    componentWillUnmount() {
+
+        this._syncTask.stop();
     }
 
     async sync() {
 
         // sync self
-        await window.headers.store.resources.User.login(window.params.user, window.params.password);
+        await this._store.resources.User.login(window.params.user, window.params.password);
 
         // sync messages
-        await window.headers.store.resources.Message.poll();
+        await this._store.resources.Message.poll();
 
         // update state
         this.setState({
-            ready: true,
-            user: await window.headers.store.resources.User.me()
+            me: await this._store.resources.User.me()
         });
+    }
+
+    selectContact(contactName) {
+
+        this.setState({contact: contactName});
+    }
+
+    getConversationForContact(contactName) {
+
+        // fetch all messages sent to or from said user
+        let messages = this._store.resources.Message.query((x) => {
+
+            return x.fromUser == contactName|| x.toUser == contactName
+        });
+
+        // return messages in ascending order
+        return messages.sort((a, b) => a.time - b.time).map((message) => {
+
+            return {
+                incoming: message.toUser == this.state.me.username,
+                contents: message.contents,
+                time: message.time
+            }
+        });
+    }
+
+    async sendMessage(contactName, message) {
+
+        let user = await this._store.resources.User.getByUsername(contactName);
+
+        await user.sendMessage(message);
+
+        this.forceUpdate();
     }
 
     renderLoading() {
@@ -104,7 +165,7 @@ class Page extends Component {
                     ]}
                 />
 
-                <Contacts contacts={this.contactList} onSelect={logInMain}/>
+                <Contacts contacts={this.contactList} selected={this.state.contact} onSelect={this.selectContact.bind(this)}/>
 
                 <div
                     style={{
@@ -114,8 +175,8 @@ class Page extends Component {
                         height: '100%'
                     }}
                 >
-                    <ChatRoll messages={require('../../../../fixtures/chat.json')} />
-                    <TextInput onSubmit={logInMain} />
+                    <ChatRoll messages={this.state.contact? this.getConversationForContact(this.state.contact) : []} />
+                    <TextInput enabled={!!(this.state.contact)} onSubmit={this.sendMessage.bind(this, this.state.contact)} />
                 </div>
 
             </div>
@@ -134,10 +195,5 @@ class Page extends Component {
     }
 }
 
-
-function logInMain(t) {
-
-    require('electron').remote.getGlobal('console').log(t);
-}
 
 render(<Page />, document.getElementById('root'));

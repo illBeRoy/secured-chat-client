@@ -47,7 +47,7 @@ class ChatRoll extends Component {
         };
     }
 
-    renderChatBubble({incoming, content, time}, index) {
+    renderChatBubble({incoming, contents, time}, index) {
 
         return (
 
@@ -74,7 +74,7 @@ class ChatRoll extends Component {
                     <tr>
                        <td>
                            <div style={incoming? this.incomingMessageStyle : this.outgoingMessageStyle}>
-                               {content}
+                               {contents}
                            </div>
                        </td>
                     </tr>

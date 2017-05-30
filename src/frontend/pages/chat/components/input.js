@@ -6,11 +6,13 @@ import {Colors} from '../../../theme';
 class TextInput extends Component {
 
     static propTypes = {
-        onSubmit: React.PropTypes.func
+        onSubmit: React.PropTypes.func,
+        enabled: React.PropTypes.bool
     };
 
     static defaultProps = {
-        onSubmit: (val) => {}
+        onSubmit: (val) => {},
+        enabled: true
     };
 
     constructor(props) {
@@ -23,7 +25,7 @@ class TextInput extends Component {
 
     get canSendMessage() {
 
-        return !!(this.state.message);
+        return !!(this.state.message) && this.props.enabled;
     }
 
     submit() {

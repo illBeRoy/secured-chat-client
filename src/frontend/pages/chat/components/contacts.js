@@ -8,19 +8,28 @@ class Contacts extends Component {
 
     static propTypes = {
         contacts: React.PropTypes.array,
-        onSelect: React.PropTypes.func
+        onSelect: React.PropTypes.func,
+        selected: React.PropTypes.string
     };
 
     static defaultProps = {
         contacts: [],
-        onSelect: (name) => {}
+        onSelect: (name) => {},
+        selected: null
     };
 
     renderContact({name, message, time}, index) {
 
         return (
 
-            <Contact key={index} name={name} message={message} time={time} onPress={this.props.onSelect} />
+            <Contact
+                key={index}
+                name={name}
+                message={message}
+                time={time}
+                onPress={this.props.onSelect}
+                highlighted={name == this.props.selected}
+            />
         );
     }
 
@@ -58,11 +67,13 @@ class Contact extends Component {
         name: React.PropTypes.string,
         message: React.PropTypes.string,
         time: React.PropTypes.number,
-        onPress: React.PropTypes.func
+        onPress: React.PropTypes.func,
+        highlighted: React.PropTypes.boolean
     };
 
     static defaultProps = {
-        onPress: (val) => {}
+        onPress: (val) => {},
+        highlighted: false
     };
 
     constructor(props) {
@@ -70,6 +81,20 @@ class Contact extends Component {
         super(props);
         this.state = {};
         this.state.hover = false;
+    }
+
+    get backgroundColor() {
+
+        if (this.props.highlighted) {
+
+            return 'rgba(0, 0, 0, .1)';
+        } else if (this.state.hover) {
+
+            return 'rgba(0, 0, 0, .025)';
+        } else {
+
+            return 'rgba(0, 0, 0, 0)';
+        }
     }
 
     setHovering(isHovering) {
@@ -92,7 +117,7 @@ class Contact extends Component {
                     width: '100%',
                     height: 68,
                     cursor: 'default',
-                    backgroundColor: this.state.hover? 'rgba(0,0,0,.025)' : 'rgba(0,0,0,0)'
+                    backgroundColor: this.backgroundColor
                 }}
                 onMouseEnter={this.setHovering.bind(this, true)}
                 onMouseLeave={this.setHovering.bind(this, false)}

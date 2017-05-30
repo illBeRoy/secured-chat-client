@@ -1,5 +1,6 @@
 import {ApplicationStore} from '../bin/backend';
 import {Storage} from '../bin/utils/storage';
+import {ArgumentParser} from 'argparse';
 
 
 class FixtureInstallationStore extends ApplicationStore {
@@ -9,7 +10,9 @@ class FixtureInstallationStore extends ApplicationStore {
 }
 
 
-const _installFixtures = async () => {
+let fixtures = [];
+
+fixtures['register'] = async () => {
 
     let fixtureStore = new FixtureInstallationStore();
 
@@ -19,12 +22,51 @@ const _installFixtures = async () => {
     console.log('Registering user avivbh');
     await fixtureStore.resources.User.register('avivbh', 'bananas');
 
-    //console.log('Sending message to roysom');
-    //fixtureStore.resources.Message.send('avivbh', 'bananas');
+    console.log('Registering user banuni');
+    await fixtureStore.resources.User.register('banuni', 'bananas');
+};
+
+
+fixtures['message'] = async () => {
+
+    let fixtureStore = new FixtureInstallationStore();
+
+    console.log('sending message as avivbh');
+    await fixtureStore.resources.User.login('avivbh', 'bananas');
+
+    let user = await fixtureStore.resources.User.getByUsername('roysom');
+    await user.sendMessage('howdy, bitch!');
+
+    console.log('sending message as banuni');
+    await fixtureStore.resources.User.login('banuni', 'bananas');
+    await user.sendMessage('yoyoyo');
+};
+
+
+const _runFixtures = async (fixtureList) => {
+
+    for (let fixture of fixtureList) {
+
+        await fixtures[fixture]();
+    }
 };
 
 
 if (require.main == module) {
 
-    _installFixtures();
+    let parser = new ArgumentParser();
+    parser.addArgument(
+        [
+            '-f',
+            '--fixtures'
+        ],
+        {
+            help: 'list of fixtures to include',
+            nargs: '+',
+            default: Object.keys(fixtures)
+        }
+    );
+
+    let args = parser.parseArgs();
+    _runFixtures(args.fixtures);
 }

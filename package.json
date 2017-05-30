@@ -6,6 +6,7 @@
     "version": "1.0.0",
     "dependencies": {
         "application-data-path": "^0.0.1",
+        "argparse": "^1.0.9",
         "axios": "^0.16.1",
         "base-64": "^0.1.0",
         "electron": "^1.6.6",
@@ -26,7 +27,7 @@
         "compile": "babel src --out-dir bin --source-maps --timeout 60000",
         "start": "electron .",
         "clean": "rimraf bin/*",
-        "server-fixtures": "babel-node fixtures/install-server-fixtures.js",
+        "server-fixtures": "babel-node fixtures/install-server-fixtures.js $1",
         "test": "mocha --compilers js:babel-core/register tests/integration/index.js"
     },
     "devDependencies": {
