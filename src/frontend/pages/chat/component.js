@@ -209,8 +209,17 @@ class Page extends Component {
                         height: '100%'
                     }}
                 >
-                    <ChatRoll messages={this.state.contact? this.getConversationForContact(this.state.contact) : []} />
-                    <TextInput enabled={!!(this.state.contact)} onSubmit={this.sendMessage.bind(this, this.state.contact)} />
+
+                    <ChatRoll
+                        title={this.state.contact? `Chat with ${this.state.contact}` : ''}
+                        messages={this.state.contact? this.getConversationForContact(this.state.contact) : []}
+                    />
+
+                    <TextInput
+                        enabled={!!(this.state.contact)}
+                        onSubmit={this.sendMessage.bind(this, this.state.contact)}
+                    />
+
                 </div>
 
                 {!this.state.interactable? this.renderLoading(): null}

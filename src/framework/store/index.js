@@ -79,6 +79,18 @@ class _Store {
     }
 
     /**
+     * Empties the entire store contents, including any model records.
+     */
+    clear() {
+
+        this._localStorage.clear();
+        for (let [_, model] of itertools.object(this._models)) {
+
+            model.setStore('{}');
+        }
+    }
+
+    /**
      * Assign base state and actions to resources and attaches them to store.
      * @param resources {[module]} the models to attach
      * @private

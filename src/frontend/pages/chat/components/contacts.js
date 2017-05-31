@@ -29,6 +29,7 @@ class Contacts extends Component {
 
     showOverlay() {
 
+        this.refs.searchBoxInput.value = ''; // anti-pattern, shame on me
         this.refs.searchBoxInput.focus();
         this.setState({showOverlay: true});
     }

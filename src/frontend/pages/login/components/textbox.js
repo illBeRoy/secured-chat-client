@@ -38,7 +38,7 @@ class Textbox extends Component {
     onChange(e) {
 
         this.setState({value: e.target.value});
-        this.props.onChange(this.state.value);
+        this.props.onChange(e.target.value);
     }
 
     renderPlaceholder() {

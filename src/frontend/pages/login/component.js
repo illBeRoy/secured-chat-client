@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 
+import {ApplicationStore} from '../../../backend';
+
 import {Loader} from '../shared-components/loader';
 
 import {Colors} from '../../theme';
@@ -13,8 +15,14 @@ class Page extends Component {
     constructor(props) {
 
         super(props);
+
+        this._store = new ApplicationStore();
+
         this.state = {};
         this.state.ready = false;
+        this.state.username = '';
+        this.state.password = '';
+        this.state.showAlert = false;
     }
 
     get interactable() {
@@ -57,7 +65,7 @@ class Page extends Component {
             <Button
                 text="Login"
                 enabled={this.interactable}
-                onPress={()=>{this.setState({ready: true})}}
+                onPress={this.login.bind(this)}
                 style={{
                     position: 'absolute',
                     left: 44,
@@ -75,6 +83,53 @@ class Page extends Component {
                 <Loader color={Colors.Secondary}/>
             </div>
         );
+    }
+
+    get alertComponent() {
+
+        return (
+
+            <div
+                style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 95,
+                    right: 0,
+                    height: 12,
+                    fontSize: 12,
+                    textAlign: 'center',
+                    zIndex: 5
+                }}
+            >
+                Error logging in
+            </div>
+        );
+    }
+
+    setUsername(username) {
+
+        this.setState({username: username});
+    }
+
+    setPassword(password) {
+
+        this.setState({password: password});
+    }
+
+    async login() {
+
+        this.setState({ready: true, showAlert: false});
+
+        this._store.clear();
+
+        try {
+
+            let user = await this._store.resources.User.login(this.state.username, this.state.password);
+            router.navigate(`/chat?user=${decodeURIComponent(this.state.username)}&password=${decodeURIComponent(this.state.password)}`);
+        } catch (err) {
+
+            this.setState({ready: false, showAlert: true});
+        }
     }
 
     render() {
@@ -100,6 +155,7 @@ class Page extends Component {
                     <Textbox
                         placeholder="Username"
                         enabled={this.interactable}
+                        onChange={this.setUsername.bind(this)}
                         style={{
                             position: 'absolute',
                             left: 44,
@@ -112,6 +168,7 @@ class Page extends Component {
                         placeholder="Password"
                         type="password"
                         enabled={this.interactable}
+                        onChange={this.setPassword.bind(this)}
                         style={{
                             position: 'absolute',
                             left: 44,
@@ -123,6 +180,8 @@ class Page extends Component {
                     {this.state.ready? this.loaderComponent : this.loginButtonComponent}
 
                 </div>
+
+                {this.state.showAlert? this.alertComponent : null}
 
             </div>
         );

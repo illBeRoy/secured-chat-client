@@ -7,10 +7,12 @@ import {Colors} from '../../../theme';
 class ChatRoll extends Component {
 
     static propTypes = {
+        title: React.PropTypes.string,
         messages: React.PropTypes.array
     };
 
     static defaultProps = {
+        title: '',
         messages: []
     };
 
@@ -125,6 +127,18 @@ class ChatRoll extends Component {
             >
 
                 {this.props.messages.reverse().map(this.renderChatBubble.bind(this))}
+
+                <div
+                    style={{
+                        cursor: 'default',
+                        color: 'rgb(150, 150, 150)',
+                        fontSize: 12,
+                        textAlign: 'center',
+                        width: '100%'
+                    }}
+                >
+                    {this.props.title}
+                </div>
 
             </div>
         );
