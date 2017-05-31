@@ -52,10 +52,12 @@ class TextInput extends Component {
                     flexDirection: 'row',
                     width: '100%',
                     height: 49,
+                    minHeight: 49,
                     borderTopStyle: 'solid',
                     borderTopWidth: 1,
                     borderTopColor: '#D9D9D9',
-                    background: 'white'
+                    background: 'white',
+                    flexGrow: 0
                 }}
             >
 

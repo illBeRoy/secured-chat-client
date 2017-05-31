@@ -44,6 +44,9 @@ class SendMessageAction extends Action {
         // now override the message's payload with the decrypted one
         sentMessage.contents = message;
 
+        // and adjust its timestamp
+        sentMessage.sentAt *= 1000;
+
         // save it
         sentMessage.save();
 

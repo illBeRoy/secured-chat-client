@@ -23,7 +23,9 @@ class ChatRoll extends Component {
             maxWidth: '55%',
             padding: 13,
             backgroundColor: Colors.SecondaryLight,
-            borderRadius: 8,
+            borderBottomRightRadius: 8,
+            borderBottomLeftRadius: 8,
+            borderTopRightRadius: 8,
             borderTopLeftRadius: 0,
             color: 'white',
             fontSize: 13
@@ -40,8 +42,10 @@ class ChatRoll extends Component {
             maxWidth: '50%',
             padding: 13,
             backgroundColor: Colors.PrimaryLight,
-            borderRadius: 8,
+            borderBottomRightRadius: 8,
+            borderBottomLeftRadius: 8,
             borderTopRightRadius: 0,
+            borderTopLeftRadius: 8,
             color: 'white',
             fontSize: 13
         };
@@ -109,26 +113,19 @@ class ChatRoll extends Component {
 
             <div
                 style={{
-                    flexGrow: 1,
                     position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column-reverse',
+                    paddingTop: 5,
+                    paddingBottom: 15,
                     overflowX: 'hidden',
                     overflowY: 'scroll',
-                    height: '100%'
+                    flexGrow: 1
                 }}
             >
-                <div
-                    style={{
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column-reverse',
-                        paddingTop: 5,
-                        paddingBottom: 15
-                    }}
-                >
 
-                    {this.props.messages.reverse().map(this.renderChatBubble.bind(this))}
+                {this.props.messages.reverse().map(this.renderChatBubble.bind(this))}
 
-                </div>
             </div>
         );
     }

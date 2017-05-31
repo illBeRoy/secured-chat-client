@@ -43,6 +43,9 @@ class PollAction extends Action {
                 // decrypt message
                 message.contents = this.utils.cryptography.decryptAsym(privateKey, publicKey, message.contents);
 
+                // adjust timestamp to match that of javascript (ms instead of seconds)
+                message.sentAt *= 1000;
+
                 // save
                 message.save();
 
@@ -57,7 +60,7 @@ class PollAction extends Action {
         }));
 
         // now clear history if needed
-        if (clearHistory) {
+        if (clearHistory && messages.length > 0) {
 
             await this.utils.api.request(
                 'delete',

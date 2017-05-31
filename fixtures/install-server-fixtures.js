@@ -24,6 +24,9 @@ fixtures['register'] = async () => {
 
     console.log('Registering user banuni');
     await fixtureStore.resources.User.register('banuni', 'bananas');
+
+    console.log('Registering user chernima');
+    await fixtureStore.resources.User.register('chernima', 'bananas');
 };
 
 

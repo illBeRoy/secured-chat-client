@@ -24,6 +24,7 @@ class Page extends Component {
 
         this.state = {};
         this.state.ready = false;
+        this.state.interactable = true;
         this.state.me = null;
         this.state.contact = null;
     }
@@ -49,7 +50,7 @@ class Page extends Component {
             }
 
             // get most recent message
-            let mostRecentMessage = itertools.max(messages, (a, b) => a.time - b.time);
+            let mostRecentMessage = itertools.max(messages, (a, b) => a.sentAt - b.sentAt);
 
             // return contact representation
             return {
@@ -60,7 +61,7 @@ class Page extends Component {
         });
 
         // sort by most recent message and return
-        return contacts.filter((x) => x != null).sort((a, b) => a.time - b.time);
+        return contacts.filter((x) => x != null).sort((a, b) => b.time - a.time);
     }
 
     async componentWillMount() {
@@ -85,6 +86,16 @@ class Page extends Component {
         this._syncTask.stop();
     }
 
+    enableInteraction() {
+
+        this.setState({interactable: true})
+    }
+
+    disableInteraction() {
+
+        this.setState({interactable: false});
+    }
+
     async sync() {
 
         // sync self
@@ -104,6 +115,23 @@ class Page extends Component {
         this.setState({contact: contactName});
     }
 
+    async searchContact(contactName) {
+
+        this.disableInteraction();
+
+        try {
+
+            let user = await this._store.resources.User.getByUsername(contactName);
+            this.selectContact(user.username);
+        } catch (err) {
+
+            console.log('well, shit')
+            // todo: alert that no such user
+        }
+
+        this.enableInteraction();
+    }
+
     getConversationForContact(contactName) {
 
         // fetch all messages sent to or from said user
@@ -113,12 +141,12 @@ class Page extends Component {
         });
 
         // return messages in ascending order
-        return messages.sort((a, b) => a.time - b.time).map((message) => {
+        return messages.sort((a, b) => a.sentAt - b.sentAt).map((message) => {
 
             return {
                 incoming: message.toUser == this.state.me.username,
                 contents: message.contents,
-                time: message.time
+                time: message.sentAt
             }
         });
     }
@@ -142,7 +170,8 @@ class Page extends Component {
                     left: '50%',
                     top: '50%',
                     marginLeft: -Loader.size / 2,
-                    marginTop: -Loader.size / 2
+                    marginTop: -Loader.size / 2,
+                    background: 'rgba(255, 255, 255, .7)'
                 }}
             >
                 <Loader color={Colors.Primary} />
@@ -165,7 +194,12 @@ class Page extends Component {
                     ]}
                 />
 
-                <Contacts contacts={this.contactList} selected={this.state.contact} onSelect={this.selectContact.bind(this)}/>
+                <Contacts
+                    contacts={this.contactList}
+                    selected={this.state.contact}
+                    onSelect={this.selectContact.bind(this)}
+                    onSubmitForm={this.searchContact.bind(this)}
+                />
 
                 <div
                     style={{
@@ -178,6 +212,8 @@ class Page extends Component {
                     <ChatRoll messages={this.state.contact? this.getConversationForContact(this.state.contact) : []} />
                     <TextInput enabled={!!(this.state.contact)} onSubmit={this.sendMessage.bind(this, this.state.contact)} />
                 </div>
+
+                {!this.state.interactable? this.renderLoading(): null}
 
             </div>
         )

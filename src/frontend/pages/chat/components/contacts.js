@@ -9,14 +9,125 @@ class Contacts extends Component {
     static propTypes = {
         contacts: React.PropTypes.array,
         onSelect: React.PropTypes.func,
+        onSubmitForm: React.PropTypes.func,
         selected: React.PropTypes.string
     };
 
     static defaultProps = {
         contacts: [],
         onSelect: (name) => {},
+        onSubmitForm: (name) => {},
         selected: null
     };
+
+    constructor(props) {
+
+        super(props);
+        this.state = {};
+        this.state.showOverlay = false;
+    }
+
+    showOverlay() {
+
+        this.refs.searchBoxInput.focus();
+        this.setState({showOverlay: true});
+    }
+
+    hideOverlay() {
+
+        this.setState({showOverlay: false});
+    }
+
+    renderOptionsButton() {
+
+        return (
+
+            <div
+                style={{
+                    position: 'absolute',
+                    right: 8,
+                    bottom: 8,
+                    width: 24,
+                    height: 24,
+                    backgroundImage: 'url(../../../../assets/plus.svg)',
+                    backgroundPosition: 'center',
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    cursor: 'pointer'
+                }}
+                onClickCapture={this.showOverlay.bind(this)}
+            ></div>
+        );
+    }
+
+    renderOverlay() {
+
+        return (
+
+            <div
+                style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: this.state.showOverlay? 'all': 'none',
+                    backgroundColor: this.state.showOverlay? 'rgba(0, 0, 0, .65)': 'rgba(0, 0, 0, 0)',
+                    transition: 'ease .4s',
+                    overflow: 'hidden'
+                }}
+                onClick={this.hideOverlay.bind(this)}
+            >
+
+                <div
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        width: '100%',
+                        height: 32,
+                        border: 0,
+                        borderBottom: '1px solid rgb(100, 100, 100)',
+                        outline: 'none',
+                        transition: 'ease .4s',
+                        transform: `translate3d(0, ${this.state.showOverlay? 0: -35}px, 0)`,
+                        backgroundColor: 'white',
+                        backgroundImage: 'url(../../../../assets/magnifying-glass.svg)',
+                        backgroundPosition: '4px center',
+                        backgroundSize: '18px 18px',
+                        backgroundRepeat: 'no-repeat'
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <input
+                        type="text"
+                        style={{
+                            position: 'absolute',
+                            left: 30,
+                            top: 0,
+                            width: 'calc(100% - 30px)',
+                            height: 32,
+                            border: 0,
+                            outline: 'none',
+                            cursor: 'text',
+                            fontSize: 14
+                        }}
+                        ref="searchBoxInput"
+                        onKeyDownCapture={(e) => {
+
+                            if (e.keyCode == 13) {
+
+                                this.props.onSubmitForm(e.target.value);
+                                e.target.value = '';
+                                this.hideOverlay();
+                            }
+                        }}
+                    />
+                </div>
+
+            </div>
+        )
+    }
 
     renderContact({name, message, time}, index) {
 
@@ -39,7 +150,7 @@ class Contacts extends Component {
 
             <div
                 style={{
-                    position: 'flex',
+                    display: 'flex',
                     flexDirection: 'column',
                     overflowX: 'hidden',
                     overflowY: 'scroll',
@@ -48,11 +159,16 @@ class Contacts extends Component {
                     backgroundColor: '#F8F8F8',
                     borderRightColor: '#D9D9D9',
                     borderRightWidth: 1,
-                    borderRightStyle: 'solid'
+                    borderRightStyle: 'solid',
+                    position: 'relative'
                 }}
             >
 
                 {this.props.contacts.map(this.renderContact.bind(this))}
+
+                {this.renderOptionsButton()}
+
+                {this.renderOverlay()}
 
             </div>
         );

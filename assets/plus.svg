@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>add</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="App" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Chat" transform="translate(-421.000000, -887.000000)" fill-rule="nonzero" fill="#5D5D5D">
+            <g id="add" transform="translate(421.000000, 887.000000)">
+                <polygon id="Shape" points="24 11.4285714 12.5714286 11.4285714 12.5714286 0 11.4285714 0 11.4285714 11.4285714 0 11.4285714 0 12.5714286 11.4285714 12.5714286 11.4285714 24 12.5714286 24 12.5714286 12.5714286 24 12.5714286"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
