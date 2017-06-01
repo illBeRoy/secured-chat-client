@@ -22,7 +22,7 @@ class Page extends Component {
         this.state.ready = false;
         this.state.username = '';
         this.state.password = '';
-        this.state.showAlert = false;
+        this.state.alert = '';
     }
 
     get interactable() {
@@ -60,7 +60,7 @@ class Page extends Component {
 
     get loginButtonComponent() {
 
-        return (
+        return [
 
             <Button
                 text="Login"
@@ -68,11 +68,24 @@ class Page extends Component {
                 onPress={this.login.bind(this)}
                 style={{
                     position: 'absolute',
+                    right: 44,
+                    bottom: 10,
+                    width: 101
+                }}
+            />,
+            <Button
+                text="Register"
+                color={Colors.Primary}
+                enabled={this.interactable}
+                onPress={this.register.bind(this)}
+                style={{
+                    position: 'absolute',
                     left: 44,
-                    bottom: 10
+                    bottom: 10,
+                    width: 101
                 }}
             />
-        );
+        ]
     }
 
     get loaderComponent() {
@@ -101,7 +114,7 @@ class Page extends Component {
                     zIndex: 5
                 }}
             >
-                Error logging in
+                {this.state.alert}
             </div>
         );
     }
@@ -116,9 +129,15 @@ class Page extends Component {
         this.setState({password: password});
     }
 
+    register() {
+
+        this._store.clear();
+        router.navigate(`/register?user=${decodeURIComponent(this.state.username)}&password=${decodeURIComponent(this.state.password)}`);
+    }
+
     async login() {
 
-        this.setState({ready: true, showAlert: false});
+        this.setState({ready: true, alert: ''});
 
         this._store.clear();
 
@@ -128,8 +147,13 @@ class Page extends Component {
             router.navigate(`/chat?user=${decodeURIComponent(this.state.username)}&password=${decodeURIComponent(this.state.password)}`);
         } catch (err) {
 
-            this.setState({ready: false, showAlert: true});
+            this.setState({ready: false, alert: 'Cannot log in'});
         }
+    }
+
+    register() {
+
+        router.navigate(`/register?user=${decodeURIComponent(this.state.username)}&password=${decodeURIComponent(this.state.password)}`);
     }
 
     render() {
@@ -181,7 +205,7 @@ class Page extends Component {
 
                 </div>
 
-                {this.state.showAlert? this.alertComponent : null}
+                {this.alertComponent}
 
             </div>
         );
