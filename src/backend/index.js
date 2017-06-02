@@ -5,14 +5,15 @@ import {Store} from '../framework/store';
 import {Storage} from '../utils/storage';
 import {ApiClient} from '../utils/api-client';
 import {Cryptography} from '../utils/cryptography';
-
 import {Session} from './session';
+
+import conf from '../../conf.json';
 
 import resources from './resources';
 
 
 let utils = {};
-utils.api = new ApiClient('http://localhost:3000');
+utils.api = new ApiClient(conf.serverUrl);
 utils.cryptography = new Cryptography();
 
 let session = new Session({});

@@ -11,6 +11,7 @@ import {Sidebar} from './components/sidebar';
 import {Contacts} from './components/contacts';
 import {ChatRoll} from './components/chat-roll';
 import {TextInput} from './components/input';
+import {Alert} from './components/alert';
 
 
 class Page extends Component {
@@ -27,6 +28,7 @@ class Page extends Component {
         this.state.interactable = true;
         this.state.me = null;
         this.state.contact = null;
+        this.state.alert = '';
     }
 
     get contactList() {
@@ -96,6 +98,16 @@ class Page extends Component {
         this.setState({interactable: false});
     }
 
+    showAlert(text) {
+
+        this.setState({alert: text});
+    }
+
+    hideAlert() {
+
+        this.setState({alert: ''});
+    }
+
     async sync() {
 
         // sync self
@@ -112,7 +124,13 @@ class Page extends Component {
 
     selectContact(contactName) {
 
-        this.setState({contact: contactName});
+        if (contactName != this.state.me.username) {
+
+            this.setState({contact: contactName});
+        } else {
+
+            this.showAlert('Cannot chat with self');
+        }
     }
 
     async searchContact(contactName) {
@@ -125,8 +143,7 @@ class Page extends Component {
             this.selectContact(user.username);
         } catch (err) {
 
-            console.log('well, shit')
-            // todo: alert that no such user
+            this.showAlert(`Could not find user ${contactName}`);
         }
 
         this.enableInteraction();
@@ -188,6 +205,13 @@ class Page extends Component {
                     flexDirection: 'row'
                 }}
             >
+
+                <Alert
+                    visible={!!(this.state.alert)}
+                    text={this.state.alert}
+                    onClick={this.hideAlert.bind(this)}
+                />
+
                 <Sidebar
                     buttons={[
                         {title: 'settings', image: '../../../../assets/cog.svg', onPress: ()=>{}}
