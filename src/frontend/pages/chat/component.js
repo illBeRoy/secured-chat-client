@@ -170,9 +170,13 @@ class Page extends Component {
 
     async sendMessage(contactName, message) {
 
+        this.disableInteraction();
+
         let user = await this._store.resources.User.getByUsername(contactName);
 
         await user.sendMessage(message);
+
+        this.enableInteraction();
 
         this.forceUpdate();
     }
@@ -241,12 +245,11 @@ class Page extends Component {
 
                     <TextInput
                         enabled={!!(this.state.contact)}
+                        busy={!this.state.interactable}
                         onSubmit={this.sendMessage.bind(this, this.state.contact)}
                     />
 
                 </div>
-
-                {!this.state.interactable? this.renderLoading(): null}
 
             </div>
         )

@@ -1,18 +1,21 @@
 import React, {Component} from 'react';
 
 import {Colors} from '../../../theme';
+import {Loader} from '../../shared-components/loader';
 
 
 class TextInput extends Component {
 
     static propTypes = {
         onSubmit: React.PropTypes.func,
-        enabled: React.PropTypes.bool
+        enabled: React.PropTypes.bool,
+        busy: React.PropTypes.bool
     };
 
     static defaultProps = {
         onSubmit: (val) => {},
-        enabled: true
+        enabled: true,
+        busy: false
     };
 
     constructor(props) {
@@ -25,7 +28,7 @@ class TextInput extends Component {
 
     get canSendMessage() {
 
-        return !!(this.state.message) && this.props.enabled;
+        return !!(this.state.message) && this.props.enabled && !this.props.busy;
     }
 
     submit() {
@@ -40,6 +43,33 @@ class TextInput extends Component {
     setMessage(message) {
 
         this.setState({message: message});
+    }
+
+    renderButton() {
+
+        return (
+
+            <div
+                style={{
+                    width: 56,
+                    height: '100%',
+                    backgroundImage: this.canSendMessage? `url(../../../../assets/blue-paper-airplane.svg)` : `url(../../../../assets/gray-paper-airplane.svg)`,
+                    backgroundSize: '24px 24px',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    cursor: this.canSendMessage? 'pointer' : 'default'
+                }}
+                onClick={this.submit.bind(this)}
+            ></div>
+        );
+    }
+
+    renderLoader() {
+
+        return (
+
+            <Loader style={{position: 'relative', right: 6, top: 4}} color={Colors.Primary} />
+        )
     }
 
     render() {
@@ -77,20 +107,7 @@ class TextInput extends Component {
                     onKeyDown={(e) => {if (e.keyCode == 13) this.submit()}}
                 />
 
-                <div
-                    style={{
-                        width: 56,
-                        height: '100%',
-                        backgroundImage: this.canSendMessage? `url(../../../../assets/blue-paper-airplane.svg)` : `url(../../../../assets/gray-paper-airplane.svg)`,
-                        backgroundSize: '24px 24px',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        cursor: this.canSendMessage? 'pointer' : 'default'
-                    }}
-                    onClick={this.submit.bind(this)}
-                >
-
-                </div>
+                {this.props.busy? this.renderLoader() : this.renderButton()}
 
             </div>
         );
