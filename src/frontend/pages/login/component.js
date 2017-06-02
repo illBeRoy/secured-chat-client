@@ -4,10 +4,10 @@ import {render} from 'react-dom';
 import {ApplicationStore} from '../../../backend';
 
 import {Loader} from '../shared-components/loader';
+import {Textbox} from '../shared-components/textbox';
+import {Button} from '../shared-components/button';
 
 import {Colors} from '../../theme';
-import {Textbox} from './components/textbox';
-import {Button} from './components/button';
 
 
 class Page extends Component {
@@ -132,7 +132,7 @@ class Page extends Component {
     register() {
 
         this._store.clear();
-        router.navigate(`/register?user=${decodeURIComponent(this.state.username)}&password=${decodeURIComponent(this.state.password)}`);
+        router.navigate(`/register?user=${encodeURIComponent(this.state.username)}&password=${encodeURIComponent(this.state.password)}`);
     }
 
     async login() {
@@ -144,7 +144,8 @@ class Page extends Component {
         try {
 
             let user = await this._store.resources.User.login(this.state.username, this.state.password);
-            router.navigate(`/chat?user=${decodeURIComponent(this.state.username)}&password=${decodeURIComponent(this.state.password)}`);
+            this._store.augmentations.utils.storage.setItem('PreviousLogin', user.username);
+            router.navigate(`/chat?user=${encodeURIComponent(this.state.username)}&password=${encodeURIComponent(this.state.password)}`);
         } catch (err) {
 
             this.setState({ready: false, alert: 'Cannot log in'});
@@ -153,7 +154,15 @@ class Page extends Component {
 
     register() {
 
-        router.navigate(`/register?user=${decodeURIComponent(this.state.username)}&password=${decodeURIComponent(this.state.password)}`);
+        router.navigate(`/register?user=${encodeURIComponent(this.state.username)}&password=${encodeURIComponent(this.state.password)}`);
+    }
+
+    componentWillMount() {
+
+        if (this._store.augmentations.utils.storage.getItem('PreviousLogin')) {
+
+            router.navigate(`/resume?user=${encodeURIComponent(this._store.augmentations.utils.storage.getItem('PreviousLogin'))}`)
+        }
     }
 
     render() {

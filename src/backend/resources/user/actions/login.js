@@ -27,7 +27,11 @@ class LoginAction extends Action {
             this.session.masterKey = password;
 
             // try to get me
-            return await User.me();
+            let user = new User(await this.utils.api.request('get', '/users/me', {credentials: this.session.credentials}));
+            user.save();
+
+            // return
+            return user;
         } catch (err) {
 
             // could not login, cancel mutations to session

@@ -68,6 +68,9 @@ class Page extends Component {
 
     async componentWillMount() {
 
+        // login
+        await this._store.resources.User.login(params.user, params.password);
+
         // sync one time
         await this.sync();
 
@@ -111,14 +114,14 @@ class Page extends Component {
     async sync() {
 
         // sync self
-        await this._store.resources.User.login(window.params.user, window.params.password);
+        let me = await this._store.resources.User.me();
 
         // sync messages
         await this._store.resources.Message.poll();
 
         // update state
         this.setState({
-            me: await this._store.resources.User.me()
+            me: me
         });
     }
 

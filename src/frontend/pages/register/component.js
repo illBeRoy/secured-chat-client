@@ -50,7 +50,8 @@ class Page extends Component {
         this.setStatus('Done. Welcome!');
         await delay(1500);
 
-        router.navigate(`/chat?user=${decodeURIComponent(params.user)}&password=${decodeURIComponent(params.password)}`);
+        this._store.augmentations.utils.storage.setItem('PreviousLogin', params.user);
+        router.navigate(`/chat?user=${encodeURIComponent(params.user)}&password=${encodeURIComponent(params.password)}`);
     }
 
     render() {

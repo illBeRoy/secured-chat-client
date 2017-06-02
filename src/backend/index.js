@@ -15,6 +15,7 @@ import resources from './resources';
 let utils = {};
 utils.api = new ApiClient(conf.serverUrl);
 utils.cryptography = new Cryptography();
+utils.storage = new Storage(conf.storagePath || appPath('woosh'));
 
 let session = new Session({});
 
@@ -22,7 +23,7 @@ class ApplicationStore extends Store {
 
     static resources = resources;
     static augmentations = {utils, session};
-    static localStorage = new Storage(appPath('woosh'));
+    static localStorage = utils.storage;
 
 }
 
