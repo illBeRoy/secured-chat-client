@@ -47,7 +47,7 @@ class Sidebar extends Component {
                     bottom: 10,
                     backgroundImage: `url(${image})`,
                     backgroundPosition: 'center',
-                    backgroundSize: 'contain',
+                    backgroundSize: '32px 32px',
                     backgroundRepeat: 'no-repeat'
                 }}></div>
             </div>

@@ -184,6 +184,12 @@ class Page extends Component {
         this.forceUpdate();
     }
 
+    logout() {
+
+        this._store.clear();
+        router.navigate('/login');
+    }
+
     renderLoading() {
 
         return (
@@ -221,7 +227,7 @@ class Page extends Component {
 
                 <Sidebar
                     buttons={[
-                        {title: 'settings', image: '../../../../assets/cog.svg', onPress: ()=>{}}
+                        {title: 'logout', image: '../../../../assets/door-arrow.svg', onPress: this.logout.bind(this)}
                     ]}
                 />
 
