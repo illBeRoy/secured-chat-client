@@ -4,6 +4,9 @@ import moment from 'moment';
 import {Colors} from '../../../theme';
 
 
+/**
+ * A Chat Roll (history) component which displays conversation history from bottom to top.
+ */
 class ChatRoll extends Component {
 
     static propTypes = {

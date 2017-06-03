@@ -21,16 +21,21 @@ class Page {
     static path = '/';
 
     /**
-     * The source file of the page's contents.
-     * @type {string}
-     */
-    static src = '';
-
-    /**
      * The title of the page.
      * @type {string}
      */
     static title = '';
+
+    /**
+     * List of params which a page accepts.
+     */
+    static accepts = [];
+
+    /**
+     * The source file of the page's contents.
+     * @type {string}
+     */
+    static src = '';
 
     /**
      * Window styling options
@@ -39,7 +44,7 @@ class Page {
     static windowOptions = {};
 
     /**
-     * Head tags
+     * Head tags.
      */
     static headTags = [];
 

@@ -3,6 +3,9 @@ import React, {Component} from 'react';
 import {Colors} from '../../../theme';
 
 
+/**
+ * An Alert component which displays a disposable message at the top right area of its container.
+ */
 class Alert extends Component {
 
     static propTypes = {

@@ -3,6 +3,16 @@ import ScriptWindow from 'electron-script-window';
 import {debug} from '../../utils/debug';
 
 
+/**
+ * The Router class manages a global routing stack, spanning over multiple windows and supporting dynamic argument
+ * passing.
+ *
+ * Windows are represented as "Pages" (@see Page class), and each page has the global router injected as a
+ * variable in its own scope, along with "headers" (objects which are always injected to pages) and "params" (values
+ * passed to pages by the ones which called them).
+ *
+ * Each page is being referred to with its own "url", and params are passed as query strings.
+ */
 class Router {
 
     /**
@@ -63,13 +73,18 @@ class Router {
     }
 
     /**
-     * Disposes of the whole router stack.
+     * Terminates the application.
      */
     close() {
 
         process.exit(0);
     }
 
+    /**
+     * Initializes a ScriptWindow instance for a given route (url) and injects global variables to it.
+     * @param url {string} page url
+     * @private
+     */
     _initializePage(url) {
 
         // get path and query parameters from url

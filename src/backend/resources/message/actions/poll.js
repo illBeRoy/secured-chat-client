@@ -15,8 +15,8 @@ class PollAction extends Action {
     static requirements = ['utils', 'session'];
 
     /**
-     * @param clearHistory {bool} if true, will remove downloaded messages from server (optional)
-     * @returns {Promise.<bool>} whether or not new messages were fetched
+     * @param clearHistory {boolean} if true, will remove downloaded messages from server (optional)
+     * @returns {Promise.<boolean>} whether or not new messages were fetched
      */
     static async onCall(clearHistory=true) {
 

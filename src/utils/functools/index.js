@@ -13,4 +13,27 @@ let partial = (func, ...args) => {
 };
 
 
-export {partial};
+/**
+ * Chains a bunch of functions by calling each with the former's return value.
+ *
+ * Supports async functions, and therefore returns a promise representing their eventual success or failure.
+ *
+ * @param funcs {[function]} the functions to chain
+ * @returns {function(...*):Promise}
+ */
+let chain = (...funcs) => {
+
+    return async (...args) => {
+
+        let result = args;
+        for (let func of funcs) {
+
+            result = [await func(...result)];
+        }
+
+        return result;
+    }
+};
+
+
+export {partial, chain};

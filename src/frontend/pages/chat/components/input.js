@@ -4,6 +4,9 @@ import {Colors} from '../../../theme';
 import {Loader} from '../../shared-components/loader';
 
 
+/**
+ * Chat text input which has three states: enabled, ready for send and busy (sending).
+ */
 class TextInput extends Component {
 
     static propTypes = {

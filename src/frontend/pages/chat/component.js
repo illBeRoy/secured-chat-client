@@ -4,6 +4,7 @@ import {render} from 'react-dom';
 import {ApplicationStore} from '../../../backend';
 import {RepeatingTask} from '../../../utils/repeating-task';
 import * as itertools from '../../../utils/itertools';
+import * as functools from '../../../utils/functools';
 
 import {Colors} from '../../theme';
 import {Loader} from '../shared-components/loader';
@@ -14,6 +15,9 @@ import {TextInput} from './components/input';
 import {Alert} from './components/alert';
 
 
+/**
+ * Chat Container Component.
+ */
 class Page extends Component {
 
     constructor(props) {
@@ -31,6 +35,15 @@ class Page extends Component {
         this.state.alert = '';
     }
 
+    /**
+     * Generates the contact list from cached User instances with whom the user has conversations.
+     *
+     * In depth, after fetching the list of cached users, it then filters out those with whom you have no message
+     * history (there are multiple reasons why one would have them cached otherwise). When done, it generates a list
+     * of contacts which includes their name, the latest message in the conversation, and the time on which it was sent.
+     *
+     * @returns {Array.<{name:string, message:string, time:number}>}
+     */
     get contactList() {
 
         // get all users
@@ -66,65 +79,58 @@ class Page extends Component {
         return contacts.filter((x) => x != null).sort((a, b) => b.time - a.time);
     }
 
-    async componentWillMount() {
-
-        // login
-        await this._store.resources.User.login(params.user, params.password);
-
-        // sync one time
-        await this.sync();
-
-        // select most recent contact, if there is
-        if (this.contactList.length > 0) {
-
-            this.selectContact(this.contactList[0].name);
-        }
-
-        this.setState({ready: true});
-
-        this._syncTask = new RepeatingTask(this.sync.bind(this));
-        this._syncTask.start(5000, false);
-    }
-
-    componentWillUnmount() {
-
-        this._syncTask.stop();
-    }
-
+    /**
+     * Make the view interactable to the user.
+     */
     enableInteraction() {
 
         this.setState({interactable: true})
     }
 
+    /**
+     * Make the view not-interactable to the user.
+     */
     disableInteraction() {
 
         this.setState({interactable: false});
     }
 
+    /**
+     * Pops an alert window with the given text.
+     * @param text {string}
+     */
     showAlert(text) {
 
         this.setState({alert: text});
     }
 
+    /**
+     * Hides the alert window.
+     */
     hideAlert() {
 
         this.setState({alert: ''});
     }
 
+    /**
+     * Performs full sync against the server and re-renders the view if needed.
+     */
     async sync() {
 
-        // sync self
-        let me = await this._store.resources.User.me();
-
         // sync messages
-        await this._store.resources.Message.poll();
+        let hasNewData = await this._store.resources.Message.poll();
 
-        // update state
-        this.setState({
-            me: me
-        });
+        // if new data arrived, re-render
+        if (hasNewData) {
+
+            this.forceUpdate();
+        }
     }
 
+    /**
+     * Select a contact to hold the conversation with.
+     * @param contactName {string}
+     */
     selectContact(contactName) {
 
         if (contactName != this.state.me.username) {
@@ -133,9 +139,14 @@ class Page extends Component {
         } else {
 
             this.showAlert('Cannot chat with self');
+            throw new Error('Cannot chat with self');
         }
     }
 
+    /**
+     * Search a contact by name,
+     * @param contactName
+     */
     async searchContact(contactName) {
 
         this.disableInteraction();
@@ -143,15 +154,20 @@ class Page extends Component {
         try {
 
             let user = await this._store.resources.User.getByUsername(contactName);
-            this.selectContact(user.username);
+            this.enableInteraction();
+            return user.username;
         } catch (err) {
 
             this.showAlert(`Could not find user ${contactName}`);
+            throw err;
         }
-
-        this.enableInteraction();
     }
 
+    /**
+     * Gets message history for a given contact, ordered chronologically.
+     * @param contactName {string}
+     * @returns {[{incoming: boolean, contents: string, time: number}]}
+     */
     getConversationForContact(contactName) {
 
         // fetch all messages sent to or from said user
@@ -171,6 +187,16 @@ class Page extends Component {
         });
     }
 
+    /**
+     * Sends message to given contact.
+     *
+     * The invariant is that this function can only be called one at a time - that's why the interface is locked to
+     * the user once it is invoked, and control is restored once the message was successfully sent.
+     *
+     * @param contactName
+     * @param message
+     * @returns {Promise.<void>}
+     */
     async sendMessage(contactName, message) {
 
         this.disableInteraction();
@@ -184,12 +210,61 @@ class Page extends Component {
         this.forceUpdate();
     }
 
+    /**
+     * Logs out the current user and transfers to login page.
+     */
     logout() {
 
         this._store.clear();
         router.navigate('/login');
     }
 
+    /**
+     * Upon mounting the component, does the following:
+     *
+     * 1. identifies self against server
+     * 2. syncs once
+     * 3. selects the contact with whom the most recent conversation was held (if exists)
+     * 4. sets the component state to ready
+     * 5. starts the repeating sync task
+     */
+    async componentWillMount() {
+
+        // identify against server
+        await this._store.resources.User.login(params.user, params.password);
+
+        // assign me
+        this.setState({me: await this._store.resources.User.me()});
+
+        // sync one time
+        await this.sync();
+
+        // select most recent contact, if there is
+        if (this.contactList.length > 0) {
+
+            this.selectContact(this.contactList[0].name);
+        }
+
+        // let user know that we're ready
+        this.setState({ready: true});
+
+        // start the syncing task
+        this._syncTask = new RepeatingTask(this.sync.bind(this));
+        this._syncTask.start(5000, false);
+    }
+
+    /**
+     * Upon dismount, stops the repeating sync task.
+     */
+    componentWillUnmount() {
+
+        this._syncTask.stop();
+    }
+
+    /**
+     * Renders the loading state of the page.
+     * @returns {XML}
+     */
     renderLoading() {
 
         return (
@@ -209,6 +284,10 @@ class Page extends Component {
         )
     }
 
+    /**
+     * Renders the active state of the page (full chat ui).
+     * @returns {XML}
+     */
     renderChat() {
 
         return (
@@ -235,7 +314,7 @@ class Page extends Component {
                     contacts={this.contactList}
                     selected={this.state.contact}
                     onSelect={this.selectContact.bind(this)}
-                    onSubmitForm={this.searchContact.bind(this)}
+                    onSubmitForm={functools.chain(this.searchContact.bind(this), this.selectContact.bind(this))}
                 />
 
                 <div
@@ -274,6 +353,7 @@ class Page extends Component {
             return this.renderLoading();
         }
     }
+
 }
 
 

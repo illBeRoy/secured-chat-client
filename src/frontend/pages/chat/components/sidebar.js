@@ -3,6 +3,9 @@ import React, {Component} from 'react';
 import {Colors} from '../../../theme';
 
 
+/**
+ * Sidebar menu which supports displaying an array of buttons with their respective icons and actions.
+ */
 class Sidebar extends Component {
 
     static propTypes = {

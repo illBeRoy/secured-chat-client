@@ -4,6 +4,13 @@ import moment from 'moment';
 import {Colors} from '../../../theme';
 
 
+/**
+ * Contact list component which displays a view with a list of contacts, most recent message in their respective
+ * conversations, time, and accepts two operations:
+ *
+ * 1. Contact selection from list
+ * 2. Contact search (textual)
+ */
 class Contacts extends Component {
 
     static propTypes = {
