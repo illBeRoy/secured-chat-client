@@ -10,6 +10,9 @@ import {Button} from '../shared-components/button';
 import {Colors} from '../../theme';
 
 
+/**
+ * Login Container Component.
+ */
 class Page extends Component {
 
     constructor(props) {
@@ -25,11 +28,19 @@ class Page extends Component {
         this.state.alert = '';
     }
 
+    /**
+     * Whether the view is currently interactable to user.
+     * @returns {boolean}
+     */
     get interactable() {
 
         return !this.state.ready;
     }
 
+    /**
+     * XML for header component.
+     * @returns {XML}
+     */
     get headerComponent() {
 
         return (
@@ -58,6 +69,10 @@ class Page extends Component {
         );
     }
 
+    /**
+     * XML for Login and Register buttons.
+     * @returns {[XML,XML]}
+     */
     get loginButtonComponent() {
 
         return [
@@ -88,6 +103,10 @@ class Page extends Component {
         ]
     }
 
+    /**
+     * XML for loader component.
+     * @returns {XML}
+     */
     get loaderComponent() {
 
         return (
@@ -98,6 +117,10 @@ class Page extends Component {
         );
     }
 
+    /**
+     * XML for alert component.
+     * @returns {XML}
+     */
     get alertComponent() {
 
         return (
@@ -119,22 +142,38 @@ class Page extends Component {
         );
     }
 
+    /**
+     * Sets the username.
+     * @param username {string}
+     */
     setUsername(username) {
 
         this.setState({username: username});
     }
 
+    /**
+     * Sets the password.
+     * @param password {string}
+     */
     setPassword(password) {
 
         this.setState({password: password});
     }
 
+    /**
+     * Initiates registration process by submitting the current username and password to the registration page.
+     */
     register() {
 
         this._store.clear();
         router.navigate(`/register?user=${encodeURIComponent(this.state.username)}&password=${encodeURIComponent(this.state.password)}`);
     }
 
+    /**
+     * Attempts to log in with the given username and password.
+     *
+     * If failed, shows alert.
+     */
     async login() {
 
         this.setState({ready: true, alert: ''});
@@ -152,11 +191,10 @@ class Page extends Component {
         }
     }
 
-    register() {
-
-        router.navigate(`/register?user=${encodeURIComponent(this.state.username)}&password=${encodeURIComponent(this.state.password)}`);
-    }
-
+    /**
+     * Upon mounting the component, attempts to find out whether the user is already logged in. If they are, routes
+     * them automatically to the "resume session" page.
+     */
     componentWillMount() {
 
         if (this._store.augmentations.utils.storage.getItem('PreviousLogin')) {

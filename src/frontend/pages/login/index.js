@@ -1,6 +1,9 @@
 import {Page} from '../../router';
 
 
+/**
+ * Login screen page.
+ */
 class LoginPage extends Page {
 
     static path = '/login';
