@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 
 
+/**
+ * Textbox component which supports graceful state transfer upon input.
+ */
 class Textbox extends Component {
 
     static propTypes = {

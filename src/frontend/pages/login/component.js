@@ -91,7 +91,7 @@ class Page extends Component {
             <Button
                 text="Register"
                 color={Colors.Primary}
-                enabled={this.interactable}
+                enabled={this.interactable && this.state.username.length >= 3 && this.state.password.length >= 3}
                 onPress={this.register.bind(this)}
                 style={{
                     position: 'absolute',

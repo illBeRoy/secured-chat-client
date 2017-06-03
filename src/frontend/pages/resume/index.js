@@ -1,6 +1,9 @@
 import {Page} from '../../router';
 
 
+/**
+ * Session resume page.
+ */
 class ResumePage extends Page {
 
     static path = '/resume';

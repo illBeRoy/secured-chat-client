@@ -7,6 +7,9 @@ import {ApplicationStore} from '../../../backend';
 import {Loader} from '../shared-components/loader';
 
 
+/**
+ * Registration container component.
+ */
 class Page extends Component {
 
     constructor(props) {
@@ -19,11 +22,24 @@ class Page extends Component {
         this.state.status = '';
     }
 
+    /**
+     * Displays a textual status message to the user.
+     * @param statusText {string}
+     */
     setStatus(statusText) {
 
         this.setState({status: statusText});
     }
 
+    /**
+     * Upon mounting the component, does the following:
+     *
+     * 1. Fires off a registration request in the backend.
+     * 2. Lets user know that keys are being generated.
+     * 3. Waits on the request to be either accepted or rejected.
+     * 4. If the request was successful, takes user to '/chat' page.
+     * 5. Otherwise, lets the user know that it had failed, and takes him back to '/login' page.
+     */
     async componentDidMount() {
 
         this.setStatus('Getting ready...');

@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import {Colors} from '../../../theme';
 
 
+/**
+ * Button component which supports graceful click animation.
+ */
 class Button extends Component {
 
     static propTypes = {
@@ -57,7 +60,6 @@ class Button extends Component {
 
     onPress(e) {
 
-        //todo: handle press
         this.props.onPress();
     }
 

@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 
 
+/**
+ * A spinning loader component.
+ */
 class Loader extends Component {
 
     static propTypes = {

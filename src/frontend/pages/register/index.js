@@ -1,6 +1,9 @@
 import {Page} from '../../router';
 
 
+/**
+ * Registration process page.
+ */
 class RegisterPage extends Page {
 
     static path = '/register';

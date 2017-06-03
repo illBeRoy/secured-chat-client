@@ -10,6 +10,9 @@ import {Loader} from '../shared-components/loader';
 import {Colors} from '../../theme';
 
 
+/**
+ * Session resume container component.
+ */
 class Page extends Component {
 
     constructor(props) {
@@ -24,26 +27,47 @@ class Page extends Component {
         this.state.alert = '';
     }
 
+    /**
+     * Indicates whether the form has enough data to be submitted.
+     * @returns {boolean}
+     */
     get isFormReady() {
 
         return !!(this.state.password)
     }
 
+    /**
+     * Sets the password.
+     * @param password {string}
+     */
     setPassword(password) {
 
         this.setState({password: password});
     }
 
+    /**
+     * Displays a textual status message to the user.
+     * @param alert {string}
+     */
     setAlert(alert) {
 
         this.setState({alert: alert});
     }
 
+    /**
+     * Sets whether the component is in loading state or not.
+     * @param loading {boolean}
+     */
     setLoading(loading) {
 
         this.setState({loading: loading});
     }
 
+    /**
+     * Attempts to log in with the given username and password.
+     *
+     * If failed, shows alert.
+     */
     async login() {
 
         this.setLoading(true);
@@ -60,12 +84,19 @@ class Page extends Component {
         this.setLoading(false);
     }
 
+    /**
+     * Logs out the current user and transfers to login page.
+     */
     async logout() {
 
         this._store.clear();
         router.navigate('/login');
     }
 
+    /**
+     * Renders the login and logout buttons.
+     * @returns {XML}
+     */
     renderButtons() {
 
         return (
@@ -108,6 +139,10 @@ class Page extends Component {
         )
     }
 
+    /**
+     * Renders a loader which indicates that the component is in loading state.
+     * @returns {XML}
+     */
     renderLoader() {
 
         return (
