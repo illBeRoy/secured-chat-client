@@ -1,6 +1,6 @@
 {
     "license": "MIT",
-    "name": "secured-chat-client",
+    "name": "woosh",
     "repository": "git@github.com:illberoy/secured-chat-client",
     "author": "Roy Sommer <roy@sommer.co.il>",
     "version": "1.0.0",
@@ -8,8 +8,8 @@
         "application-data-path": "^0.0.1",
         "argparse": "^1.0.9",
         "axios": "^0.16.1",
+        "babel-runtime": "^6.23.0",
         "base-64": "^0.1.0",
-        "electron": "^1.6.6",
         "electron-script-window": "^0.1.1",
         "glob": "^7.1.1",
         "mkdirp": "^0.5.1",
@@ -24,6 +24,8 @@
         "structs": "^0.0.0"
     },
     "scripts": {
+        "dist": "export CSC_IDENTITY_AUTO_DISCOVERY=false && build",
+        "pack": "export CSC_IDENTITY_AUTO_DISCOVERY=false && build --dir",
         "compile": "babel src --out-dir bin --source-maps --timeout 60000",
         "start": "electron .",
         "clean": "rimraf bin/*",
@@ -45,9 +47,22 @@
         "chai": "^3.5.0",
         "clear-require": "^2.0.0",
         "delay": "^2.0.0",
+        "electron": "^1.6.6",
         "electron-builder": "^18.3.0",
         "mocha": "^3.3.0",
         "rimraf": "^2.6.1"
+    },
+    "build": {
+        "appId": "edu.roysom.woosh",
+        "files": [
+            "bin",
+            "node_modules",
+            "assets",
+            "conf.json"
+        ],
+        "mac": {
+            "category": "public.app-category.social-networking"
+        }
     },
     "main": "bin/index.js",
     "description": "academic project"
