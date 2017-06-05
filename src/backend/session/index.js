@@ -25,6 +25,11 @@ class Session {
         return this._cryptography.hash(this.masterKey, 2);
     }
 
+    get integrityKey() {
+
+        return this._cryptography.hash(this.masterKey, 3);
+    }
+
     get credentials() {
 
         return {username: this.username, password: this.authKey};

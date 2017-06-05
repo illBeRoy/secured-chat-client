@@ -117,13 +117,20 @@ class Page extends Component {
      */
     async sync() {
 
-        // sync messages
-        let hasNewData = await this._store.resources.Message.poll();
+        try {
 
-        // if new data arrived, re-render
-        if (hasNewData) {
+            // sync messages
+            let hasNewData = await this._store.resources.Message.poll();
 
-            this.forceUpdate();
+            // if new data arrived, re-render
+            if (hasNewData) {
+
+                this.forceUpdate();
+            }
+        } catch (err) {
+
+            // in case of an error, display it in the alert window
+            this.showAlert(err.message);
         }
     }
 
@@ -201,9 +208,15 @@ class Page extends Component {
 
         this.disableInteraction();
 
-        let user = await this._store.resources.User.getByUsername(contactName);
+        try {
 
-        await user.sendMessage(message);
+            let user = await this._store.resources.User.getByUsername(contactName);
+
+            await user.sendMessage(message);
+        } catch (err) {
+
+            this.showAlert(err.message);
+        }
 
         this.enableInteraction();
 

@@ -33,6 +33,17 @@ class RegisterAction extends Action {
         // encrypt private key
         privateKey = this.utils.cryptography.encryptSym(this.session.encryptionKey, privateKey);
 
+        // create hmac
+        let hmac = this.utils.cryptography.hash(
+            this.utils.cryptography.encryptSym(
+                this.session.integrityKey,
+                privateKey
+            )
+        );
+
+        // finally, concatenate the encrypted key and the hmac
+        privateKey = `${privateKey}${hmac}`;
+
         // attempt to register user
         let user = new User(await this.utils.api.request(
             'post',

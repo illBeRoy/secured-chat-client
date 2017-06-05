@@ -24,7 +24,26 @@ class KeysAction extends Action {
         let privateKey = null;
         if (this.username == this.session.username) {
 
-            privateKey = this.utils.cryptography.decryptSym(this.session.encryptionKey, this.privateKey);
+            // extract hmac and private key encryption
+            let hmac = this.privateKey.substr(-44);
+            privateKey = this.privateKey.substr(0, this.privateKey.length - 44);
+
+            // attempt to recreate hmac locally
+            let hmacRecreation = this.utils.cryptography.hash(
+                this.utils.cryptography.encryptSym(
+                    this.session.integrityKey,
+                    privateKey
+                )
+            );
+
+            // test recreation against hmac. if failed, throw
+            if (hmacRecreation != hmac) {
+
+                throw new Error('Fatal data integrity error! Cannot validate own private key!');
+            }
+
+            // decrypt own private key with data encryption key
+            privateKey = this.utils.cryptography.decryptSym(this.session.encryptionKey, privateKey);
         }
 
         // return keys
