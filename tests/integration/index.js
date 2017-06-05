@@ -109,6 +109,9 @@ describe('integration tests', function() {
             Math.random().toString().split('.')[1]
         );
 
+        // inject api url
+        ApplicationStore.augmentations.utils.api._baseUrl = 'http://localhost:3000';
+
         // create instance
         let app = new ApplicationStore();
         //
