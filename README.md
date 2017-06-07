@@ -57,8 +57,8 @@ In addition to those, all users have pairs of RSA keys. Those are used for messa
 
 3. She constructs the payload from the following:
 	* hashed mac signed with her own private key
-	* the message itself, signed with the generated one time key
-	* the key itself, encrypted using the Bob's public key
+	* the message itself, encrypted with the generated one-time key
+	* the key itself, encrypted using Bob's public key
 
 4. The message is sent to the server, where it sits, waiting for Bob to claim it.
 
@@ -70,7 +70,7 @@ In addition to those, all users have pairs of RSA keys. Those are used for messa
 
 The UI is displayed using chromium runtime, meaning that it's essentially html. It was written using Facebook's [reactjs](https://facebook.github.io/react) library.
 
-### development process
+### Development Process
 
 **API client and Cryptography**
 
@@ -133,13 +133,13 @@ And on Windows 10:
 
 ![windows screenshot](assets/readme/screenshot-win.png)
 
-### running and packaging
+### Running and Packaging
 
 **NPM tasks**
 
 In order to fully use the source code, basic knowledge of [npm](https://www.npmjs.org) is required.
 
-The following npm tasks exist:
+The following npm tasks are available:
 
 * `clean` - cleans the compiled code directory
 * `compile` - compiles source code into es5
@@ -179,6 +179,6 @@ If you want to create binaries for all platforms, make sure that you have [all r
 
 ### Attributions
 
-The project is the work of Roy Sommer - but not solely: behind the scenes it uses many open source packages, thanks to the huge community standing behind nodejs and npm. From Facebook's reactjs to GitHub's Electron, axios, node-forge, babel and many more - I owe a huge thanks to the open source community. A full list of open source project could be found in my project's `package.json`.
+The project is the work of Roy Sommer - but not solely: behind the scenes it uses many open source packages, thanks to the huge community standing behind nodejs and npm. From Facebook's reactjs to Github's Electron, axios, node-forge, babel and many more - I owe a huge thanks to the open source community. A full list of open source project could be found in my project's `package.json`.
 
 Another important attribution should be given to [flaticon.com](flaticon.com), a huge database of vector icons to be used with apps and websites. All icons used in Woosh were either directly taken from there, or built using art from there.
