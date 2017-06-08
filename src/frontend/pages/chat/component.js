@@ -166,6 +166,7 @@ class Page extends Component {
         } catch (err) {
 
             this.showAlert(`Could not find user ${contactName}`);
+            this.enableInteraction();
             throw err;
         }
     }

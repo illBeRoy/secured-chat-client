@@ -34,6 +34,11 @@ class Contacts extends Component {
         this.state.showOverlay = false;
     }
 
+    get isSearchBoxEmpty() {
+
+        return this.refs.searchBoxInput? this.refs.searchBoxInput.value == '' : true;
+    }
+
     showOverlay() {
 
         this.refs.searchBoxInput.value = ''; // anti-pattern, shame on me
@@ -121,7 +126,7 @@ class Contacts extends Component {
                             fontSize: 14
                         }}
                         ref="searchBoxInput"
-                        onKeyDownCapture={(e) => {
+                        onKeyUp={(e) => {
 
                             if (e.keyCode == 13) {
 
@@ -129,9 +134,30 @@ class Contacts extends Component {
                                 e.target.value = '';
                                 this.hideOverlay();
                             }
+
+                            // a line i'm not proud of
+                            this.forceUpdate();
                         }}
                     />
+
                 </div>
+
+                <div
+                    style={{
+                        position: 'absolute',
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate3d(-50%, -50%, 0)',
+                        width: 64,
+                        height: 64,
+                        backgroundImage: 'url(../../../../assets/enter-key.svg)',
+                        backgroundSize: 'contain',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
+                        display: this.isSearchBoxEmpty? 'none' : 'block',
+                        opacity: .7
+                    }}
+                ></div>
 
             </div>
         )
